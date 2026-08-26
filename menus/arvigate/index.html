@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L'Arvigate — Démo de carte redesignée</title>
+<style>
+  :root {
+    --ardoise: #3c4a52;
+    --ardoise-clair: #6b7d86;
+    --creme: #f8f5ee;
+    --nature: #7d8b5a;
+    --sarrasin: #8a6f4d;
+    --ligne: #ddd6c6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: var(--creme);
+    color: var(--ardoise);
+    line-height: 1.6;
+  }
+
+  /* ---------- Écran de verrouillage ---------- */
+  .verrou {
+    position: fixed; inset: 0; z-index: 100;
+    background: var(--ardoise);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem;
+  }
+  .verrou-carte {
+    background: var(--creme);
+    max-width: 420px; width: 100%;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    border-bottom: 4px solid var(--nature);
+  }
+  .verrou-carte h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400; font-size: 1.6rem; color: var(--ardoise);
+    margin-bottom: 0.4rem;
+  }
+  .verrou-carte .sur {
+    font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--nature); margin-bottom: 0.8rem;
+  }
+  .verrou-carte p { font-size: 0.9rem; color: #6b6a5e; margin-bottom: 1.4rem; }
+  .verrou-carte input {
+    width: 100%; padding: 0.7rem 0.9rem;
+    font-size: 1rem; text-align: center; letter-spacing: 0.15em;
+    border: 1px solid var(--ligne); background: #fff; color: var(--ardoise);
+    margin-bottom: 0.8rem; text-transform: uppercase;
+  }
+  .verrou-carte button {
+    width: 100%; padding: 0.75rem;
+    background: var(--ardoise); color: #fff; border: none; cursor: pointer;
+    font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase;
+  }
+  .verrou-carte button:hover { background: var(--ardoise-clair); }
+  .verrou-erreur { color: #a03a2a; font-size: 0.82rem; min-height: 1.2em; margin-top: 0.7rem; }
+
+  /* ---------- Filigrane ---------- */
+  .filigrane {
+    position: fixed; inset: -50%; z-index: 60;
+    pointer-events: none; overflow: hidden;
+    display: flex; flex-wrap: wrap; align-content: space-around; justify-content: space-around;
+    transform: rotate(-24deg);
+  }
+  .filigrane span {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.3rem; letter-spacing: 0.25em; white-space: nowrap;
+    color: rgba(60, 74, 82, 0.08);
+    padding: 2.2rem 1.5rem; text-transform: uppercase;
+  }
+
+  .contenu { display: none; }
+  .contenu.visible { display: block; }
+
+  .bandeau-demo {
+    background: var(--ardoise);
+    color: #d9d4c4;
+    text-align: center;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.55rem 1rem;
+  }
+
+  .carte { max-width: 740px; margin: 0 auto; padding: 3.2rem 1.5rem 3rem; }
+
+  header { text-align: center; margin-bottom: 2.8rem; }
+  .sur-titre {
+    font-size: 0.75rem; letter-spacing: 0.35em; text-transform: uppercase;
+    color: var(--nature); margin-bottom: 0.9rem;
+  }
+  h1.titre {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    font-size: clamp(2.2rem, 6vw, 3.2rem);
+    color: var(--ardoise);
+  }
+  .triskell {
+    margin: 1rem auto;
+    width: 70px; height: 2px;
+    background: var(--sarrasin);
+    position: relative;
+  }
+  .triskell::before, .triskell::after {
+    content: ""; position: absolute; top: -3px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--sarrasin);
+  }
+  .triskell::before { left: 0; }
+  .triskell::after { right: 0; }
+  .sous-titre {
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic; color: var(--ardoise-clair); font-size: 1.02rem;
+  }
+  .coordonnees { margin-top: 1rem; font-size: 0.8rem; letter-spacing: 0.08em; color: #96917f; }
+  .badges { margin-top: 0.9rem; }
+  .badge {
+    display: inline-block;
+    font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+    border: 1px solid var(--nature); color: var(--nature);
+    padding: 0.25rem 0.7rem; border-radius: 999px; margin: 0 0.25rem;
+  }
+
+  section { margin-bottom: 2.8rem; }
+  h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400; font-size: 1.35rem; color: var(--ardoise);
+    text-align: center; letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .section-note {
+    text-align: center; font-size: 0.85rem; font-style: italic;
+    color: #96917f; margin-bottom: 1.6rem;
+  }
+
+  .encart {
+    background: #fff; border: 1px solid var(--ligne);
+    border-left: 4px solid var(--nature);
+    padding: 1.6rem 1.5rem;
+  }
+  .ligne-prix {
+    display: flex; align-items: baseline; gap: 0.6rem;
+    padding: 0.55rem 0; flex-wrap: wrap;
+  }
+  .ligne-prix .nom { font-weight: 600; }
+  .ligne-prix .detail { color: #96917f; font-size: 0.85rem; }
+  .ligne-prix .points { flex: 1; border-bottom: 1px dotted #c6bfa9; transform: translateY(-4px); min-width: 2rem; }
+  .ligne-prix .prix {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.08rem; color: var(--sarrasin); white-space: nowrap;
+  }
+
+  .formule-midi {
+    text-align: center;
+    background: var(--ardoise); color: var(--creme);
+    padding: 2rem 1.5rem;
+  }
+  .formule-midi .titre-fm {
+    font-family: Georgia, "Times New Roman", serif; font-size: 1.25rem;
+    letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.4rem;
+  }
+  .formule-midi .compo { font-size: 0.92rem; color: #c8d0d5; margin-bottom: 0.8rem; }
+  .formule-midi .prix-fm {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 2rem; color: #fff;
+  }
+  .formule-midi .quand { font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--nature); margin-top: 0.6rem; }
+
+  .note-carte {
+    text-align: center; font-size: 0.85rem; font-style: italic; color: #96917f;
+    border-top: 1px solid var(--ligne); padding-top: 1.6rem; margin-top: 1rem;
+  }
+
+  .mention-reconstitution {
+    max-width: 740px; margin: 0 auto; padding: 0 1.5rem 2rem;
+    text-align: center; font-size: 0.72rem; color: #aca796; letter-spacing: 0.04em;
+  }
+
+  /* ---------- Footer CTA ---------- */
+  .cta {
+    background: var(--nature); color: var(--creme);
+    text-align: center; padding: 3rem 1.5rem;
+  }
+  .cta h3 {
+    font-family: Georgia, "Times New Roman", serif; font-weight: 400;
+    font-size: 1.4rem; margin-bottom: 0.8rem;
+  }
+  .cta .offre { font-size: 1rem; margin-bottom: 1.6rem; color: #e6e9dc; }
+  .cta .offre strong { color: #fff; }
+  .cta .contact { font-size: 0.9rem; line-height: 1.9; color: #d3d9c4; }
+  .cta .contact a { color: #fff; text-decoration: none; border-bottom: 1px solid var(--sarrasin); }
+  .cta .contact .nom { font-size: 1rem; color: #fff; letter-spacing: 0.08em; }
+
+  @media (max-width: 480px) {
+    .carte { padding: 2.2rem 1.1rem 2rem; }
+    .encart { padding: 1.2rem 1rem; }
+    .ligne-prix .detail { display: block; }
+  }
+</style>
+</head>
+<body>
+
+<div class="verrou" id="verrou">
+  <div class="verrou-carte">
+    <p class="sur">Démo privée</p>
+    <h1>L'Arvigate</h1>
+    <p>Cette proposition de redesign de carte est protégée.<br>Saisissez le code d'accès communiqué par votre contact.</p>
+    <form id="form-verrou">
+      <input type="text" id="code" autocomplete="off" placeholder="CODE D'ACCÈS" aria-label="Code d'accès">
+      <button type="submit">Déverrouiller la démo</button>
+    </form>
+    <p class="verrou-erreur" id="erreur"></p>
+  </div>
+</div>
+
+<div class="filigrane" id="filigrane" aria-hidden="true"></div>
+
+<div class="contenu" id="contenu">
+
+<div class="bandeau-demo">Démo — proposition de redesign, offerte sans engagement</div>
+
+<div class="carte">
+
+  <header>
+    <p class="sur-titre">Crêperie bretonne · Forum d'Orvault</p>
+    <h1 class="titre">L'Arvigate</h1>
+    <div class="triskell"></div>
+    <p class="sous-titre">Galettes et crêpes artisanales, produits bio et locaux — service le midi uniquement</p>
+    <p class="coordonnees">Forum d'Orvault, rue du Commandant Charcot, 44700 Orvault</p>
+    <p class="badges"><span class="badge">Bio &amp; local</span><span class="badge">Note 5,0</span><span class="badge">Midi uniquement</span></p>
+  </header>
+
+  <section>
+    <div class="formule-midi">
+      <p class="titre-fm">Formule midi</p>
+      <p class="compo">Une galette + une crêpe + une boisson</p>
+      <p class="prix-fm">14,70&nbsp;€</p>
+      <p class="quand">Du lundi au vendredi, le midi</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Les galettes</h2>
+    <p class="section-note">Exemples de la carte — au blé noir, 15 recettes à la carte</p>
+    <div class="encart">
+      <div class="ligne-prix">
+        <span class="nom">Les galettes</span>
+        <span class="detail">— 15 recettes à la carte</span>
+        <span class="points"></span>
+        <span class="prix">3,50&nbsp;€ – 12,50&nbsp;€</span>
+      </div>
+      <div class="ligne-prix">
+        <span class="nom">Galette à composer</span>
+        <span class="detail">— garnitures au choix</span>
+        <span class="points"></span>
+        <span class="prix">selon garnitures</span>
+      </div>
+      <div class="ligne-prix">
+        <span class="nom">Menu enfant</span>
+        <span class="detail">— pour les petits gourmands</span>
+        <span class="points"></span>
+        <span class="prix">9,90&nbsp;€</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Les crêpes</h2>
+    <p class="section-note">Exemples de la carte — 13 recettes sucrées</p>
+    <div class="encart">
+      <div class="ligne-prix">
+        <span class="nom">Les crêpes</span>
+        <span class="detail">— 13 recettes à la carte</span>
+        <span class="points"></span>
+        <span class="prix">voir carte</span>
+      </div>
+      <div class="ligne-prix">
+        <span class="nom">Crêpes flambées</span>
+        <span class="detail">— préparées en salle</span>
+        <span class="points"></span>
+        <span class="prix">7,90&nbsp;€</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Les boissons</h2>
+    <p class="section-note">Exemples de la carte — cidrerie et bulles</p>
+    <div class="encart">
+      <div class="ligne-prix">
+        <span class="nom">Cidres bio</span>
+        <span class="points"></span>
+        <span class="prix">voir carte</span>
+      </div>
+      <div class="ligne-prix">
+        <span class="nom">Breizh Cola</span>
+        <span class="points"></span>
+        <span class="prix">voir carte</span>
+      </div>
+      <div class="ligne-prix">
+        <span class="nom">Vins</span>
+        <span class="points"></span>
+        <span class="prix">voir carte</span>
+      </div>
+      <div class="ligne-prix">
+        <span class="nom">Champagne</span>
+        <span class="detail">— la bouteille</span>
+        <span class="points"></span>
+        <span class="prix">59,00&nbsp;€</span>
+      </div>
+    </div>
+  </section>
+
+  <p class="note-carte">
+    Service le midi uniquement — produits bio et locaux, privilégiant les circuits courts.
+  </p>
+
+</div>
+
+<p class="mention-reconstitution">
+  Carte reconstituée à partir d'informations publiques — chaque plat, prix et allergène sera validé par le restaurateur avant diffusion.
+</p>
+
+<footer class="cta">
+  <h3>Cette démo vous plaît&nbsp;?</h3>
+  <p class="offre">Version finalisée (print + mobile + QR code)&nbsp;: <strong>300&nbsp;€ une fois, sans abonnement</strong>.</p>
+  <p class="contact">
+    <span class="nom">Arnaud ACHE — Mathurin ACHE ARNAUD</span><br>
+    <a href="mailto:mathurin.ache@maaihub.com">mathurin.ache@maaihub.com</a><br>
+    <a href="tel:+33683959720">06.83.95.97.20</a>
+  </p>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  var HASH_ATTENDU = "eab9d157ac237abfb99e62e373733e7a517af4baccc8e35373056192c6b31f14";
+  var NOM = "DÉMO — L'Arvigate";
+
+  var fg = document.getElementById("filigrane");
+  var html = "";
+  for (var i = 0; i < 120; i++) html += "<span>" + NOM + "</span>";
+  fg.innerHTML = html;
+
+  function sha256(texte) {
+    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(texte)).then(function (buf) {
+      return Array.prototype.map.call(new Uint8Array(buf), function (o) {
+        return ("0" + o.toString(16)).slice(-2);
+      }).join("");
+    });
+  }
+
+  document.getElementById("form-verrou").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var saisie = document.getElementById("code").value.toUpperCase().replace(/\s+/g, "");
+    var erreur = document.getElementById("erreur");
+    sha256(saisie).then(function (h) {
+      if (h === HASH_ATTENDU) {
+        document.getElementById("verrou").style.display = "none";
+        document.getElementById("contenu").classList.add("visible");
+        document.body.style.overflow = "";
+      } else {
+        erreur.textContent = "Code incorrect. Vérifiez le code communiqué.";
+      }
+    });
+  });
+  document.body.style.overflow = "hidden";
+})();
+</script>
+
+</body>
+</html>

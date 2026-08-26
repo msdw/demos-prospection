@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L'Amour des mets — Démo de carte redesignée</title>
+<style>
+  :root {
+    --encre: #2b2f36;
+    --bleu: #2f4d6b;
+    --bleu-clair: #5b7a96;
+    --creme: #faf7f1;
+    --bois: #b99b6b;
+    --ligne: #e3ddd2;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: var(--creme);
+    color: var(--encre);
+    line-height: 1.6;
+  }
+
+  /* ---------- Écran de verrouillage ---------- */
+  .verrou {
+    position: fixed; inset: 0; z-index: 100;
+    background: var(--bleu);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem;
+  }
+  .verrou-carte {
+    background: var(--creme);
+    max-width: 420px; width: 100%;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    border-top: 4px solid var(--bois);
+  }
+  .verrou-carte h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400; font-size: 1.5rem; color: var(--bleu);
+    margin-bottom: 0.4rem;
+  }
+  .verrou-carte .sur {
+    font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--bois); margin-bottom: 0.8rem;
+  }
+  .verrou-carte p { font-size: 0.9rem; color: #6d675c; margin-bottom: 1.4rem; }
+  .verrou-carte input {
+    width: 100%; padding: 0.7rem 0.9rem;
+    font-size: 1rem; text-align: center; letter-spacing: 0.15em;
+    border: 1px solid var(--ligne); background: #fff; color: var(--encre);
+    margin-bottom: 0.8rem; text-transform: uppercase;
+  }
+  .verrou-carte button {
+    width: 100%; padding: 0.75rem;
+    background: var(--bleu); color: #fff; border: none; cursor: pointer;
+    font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase;
+  }
+  .verrou-carte button:hover { background: var(--bleu-clair); }
+  .verrou-erreur { color: #a03a2a; font-size: 0.82rem; min-height: 1.2em; margin-top: 0.7rem; }
+
+  /* ---------- Filigrane ---------- */
+  .filigrane {
+    position: fixed; inset: -50%; z-index: 60;
+    pointer-events: none; overflow: hidden;
+    display: flex; flex-wrap: wrap; align-content: space-around; justify-content: space-around;
+    transform: rotate(-24deg);
+  }
+  .filigrane span {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.3rem; letter-spacing: 0.25em; white-space: nowrap;
+    color: rgba(47, 77, 107, 0.09);
+    padding: 2.2rem 1.5rem; text-transform: uppercase;
+  }
+
+  .contenu { display: none; }
+  .contenu.visible { display: block; }
+
+  .bandeau-demo {
+    background: var(--encre);
+    color: #d8d2c6;
+    text-align: center;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.55rem 1rem;
+  }
+
+  .carte { max-width: 720px; margin: 0 auto; padding: 3.5rem 1.5rem 3rem; }
+
+  header { text-align: center; margin-bottom: 3rem; }
+  .sur-titre {
+    font-size: 0.75rem; letter-spacing: 0.35em; text-transform: uppercase;
+    color: var(--bois); margin-bottom: 0.9rem;
+  }
+  h1.titre {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    font-size: clamp(2.1rem, 6vw, 3.1rem);
+    color: var(--bleu);
+    letter-spacing: 0.02em;
+  }
+  .filet { width: 64px; height: 1px; background: var(--bois); margin: 1.2rem auto; }
+  .sous-titre {
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic; color: var(--bleu-clair); font-size: 1.02rem;
+  }
+  .coordonnees { margin-top: 1rem; font-size: 0.8rem; letter-spacing: 0.08em; color: #8b857a; }
+
+  section { margin-bottom: 3rem; }
+  h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400; font-size: 1.35rem; color: var(--bleu);
+    text-align: center; letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .section-note {
+    text-align: center; font-size: 0.85rem; font-style: italic;
+    color: #8b857a; margin-bottom: 1.8rem;
+  }
+
+  .formules { border: 1px solid var(--ligne); background: #fff; padding: 2rem 1.5rem; }
+  .formule { display: flex; align-items: baseline; gap: 0.6rem; padding: 0.55rem 0; flex-wrap: wrap; }
+  .formule .nom { font-weight: 600; letter-spacing: 0.02em; }
+  .formule .detail { color: #8b857a; font-size: 0.85rem; }
+  .formule .points { flex: 1; border-bottom: 1px dotted #c9c2b4; transform: translateY(-4px); min-width: 2rem; }
+  .formule .prix {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.1rem; color: var(--bleu); white-space: nowrap;
+  }
+
+  .plat { padding: 1.1rem 0; border-bottom: 1px solid var(--ligne); }
+  .plat:last-child { border-bottom: none; }
+  .plat-titre { font-family: Georgia, "Times New Roman", serif; font-size: 1.12rem; color: var(--encre); }
+  .plat-desc { font-size: 0.92rem; color: #6d675c; font-style: italic; margin-top: 0.2rem; }
+
+  .note-carte {
+    text-align: center; font-size: 0.85rem; font-style: italic; color: #8b857a;
+    border-top: 1px solid var(--ligne); padding-top: 1.6rem; margin-top: 1rem;
+  }
+
+  .mention-reconstitution {
+    max-width: 720px; margin: 0 auto; padding: 0 1.5rem 2rem;
+    text-align: center; font-size: 0.72rem; color: #a09a8d; letter-spacing: 0.04em;
+  }
+
+  /* ---------- Footer CTA ---------- */
+  .cta {
+    background: var(--bleu); color: var(--creme);
+    text-align: center; padding: 3rem 1.5rem;
+  }
+  .cta h3 {
+    font-family: Georgia, "Times New Roman", serif; font-weight: 400;
+    font-size: 1.4rem; margin-bottom: 0.8rem;
+  }
+  .cta .offre { font-size: 1rem; margin-bottom: 1.6rem; color: #dfe6ee; }
+  .cta .offre strong { color: #fff; }
+  .cta .contact { font-size: 0.9rem; line-height: 1.9; color: #c9d4e0; }
+  .cta .contact a { color: #fff; text-decoration: none; border-bottom: 1px solid var(--bois); }
+  .cta .contact .nom { font-size: 1rem; color: #fff; letter-spacing: 0.08em; }
+
+  @media (max-width: 480px) {
+    .carte { padding: 2.2rem 1.1rem 2rem; }
+    .formules { padding: 1.4rem 1rem; }
+    .formule .detail { display: block; }
+  }
+</style>
+</head>
+<body>
+
+<div class="verrou" id="verrou">
+  <div class="verrou-carte">
+    <p class="sur">Démo privée</p>
+    <h1>L'Amour des mets</h1>
+    <p>Cette proposition de redesign de carte est protégée.<br>Saisissez le code d'accès communiqué par votre contact.</p>
+    <form id="form-verrou">
+      <input type="text" id="code" autocomplete="off" placeholder="CODE D'ACCÈS" aria-label="Code d'accès">
+      <button type="submit">Déverrouiller la démo</button>
+    </form>
+    <p class="verrou-erreur" id="erreur"></p>
+  </div>
+</div>
+
+<div class="filigrane" id="filigrane" aria-hidden="true"></div>
+
+<div class="contenu" id="contenu">
+
+<div class="bandeau-demo">Démo — proposition de redesign, offerte sans engagement</div>
+
+<div class="carte">
+
+  <header>
+    <p class="sur-titre">Orvault · Bistronomie · Cuisine du marché</p>
+    <h1 class="titre">L'Amour des mets</h1>
+    <div class="filet"></div>
+    <p class="sous-titre">Le chef Yann Oillic — produits frais et de saison, cuisine ouverte sur la salle</p>
+    <p class="coordonnees">12 rue Hubert de la Brosse, 44700 Orvault</p>
+  </header>
+
+  <section>
+    <h2>Nos formules</h2>
+    <p class="section-note">La carte change chaque semaine, au fil du marché</p>
+    <div class="formules">
+      <div class="formule">
+        <span class="nom">Formule midi</span>
+        <span class="detail">— service du déjeuner</span>
+        <span class="points"></span>
+        <span class="prix">23,50&nbsp;€</span>
+      </div>
+      <div class="formule">
+        <span class="nom">Formule soir</span>
+        <span class="detail">— service du dîner</span>
+        <span class="points"></span>
+        <span class="prix">33,50&nbsp;€</span>
+      </div>
+      <div class="formule">
+        <span class="nom">Menu entrée · plat · dessert</span>
+        <span class="points"></span>
+        <span class="prix">38,50&nbsp;€</span>
+      </div>
+      <div class="formule">
+        <span class="nom">Menu dégustation</span>
+        <span class="detail">— midi &amp; soir</span>
+        <span class="points"></span>
+        <span class="prix">44,50&nbsp;€</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Exemples de la carte</h2>
+    <p class="section-note">Carte courte, renouvelée chaque semaine — extraits récents</p>
+
+    <div class="plat">
+      <p class="plat-titre">Noix de Saint-Jacques du bateau Trugarez</p>
+      <p class="plat-desc">Avocat rôti au beurre demi-sel, chou-fleur agrume</p>
+    </div>
+
+    <div class="plat">
+      <p class="plat-titre">Quasi de veau cuit à basse température</p>
+      <p class="plat-desc">Ail des ours de la vallée du Cens, jus truffé</p>
+    </div>
+
+    <div class="plat">
+      <p class="plat-titre">Framboise fraîche, concassé tomate-vanille</p>
+      <p class="plat-desc">Sorbet huile d'olive, meringue, pop corn</p>
+    </div>
+  </section>
+
+  <p class="note-carte">
+    Une carte qui change chaque semaine mérite un menu facile à mettre à jour :<br>
+    la version finalisée se modifie en quelques minutes, sans réimprimer.
+  </p>
+
+</div>
+
+<p class="mention-reconstitution">
+  Carte reconstituée à partir d'informations publiques — chaque plat, prix et allergène sera validé par le restaurateur avant diffusion.
+</p>
+
+<footer class="cta">
+  <h3>Cette démo vous plaît&nbsp;?</h3>
+  <p class="offre">Version finalisée (print + mobile + QR code)&nbsp;: <strong>300&nbsp;€ une fois, sans abonnement</strong>.</p>
+  <p class="contact">
+    <span class="nom">Arnaud ACHE — Mathurin ACHE ARNAUD</span><br>
+    <a href="mailto:mathurin.ache@maaihub.com">mathurin.ache@maaihub.com</a><br>
+    <a href="tel:+33683959720">06.83.95.97.20</a>
+  </p>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  var HASH_ATTENDU = "24e152b92ca88441dec83c56c0c3b01a6d63c7188a3346048ce0d91145c62c60";
+  var NOM = "DÉMO — L'Amour des mets";
+
+  // Filigrane répété
+  var fg = document.getElementById("filigrane");
+  var html = "";
+  for (var i = 0; i < 120; i++) html += "<span>" + NOM + "</span>";
+  fg.innerHTML = html;
+
+  function sha256(texte) {
+    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(texte)).then(function (buf) {
+      return Array.prototype.map.call(new Uint8Array(buf), function (o) {
+        return ("0" + o.toString(16)).slice(-2);
+      }).join("");
+    });
+  }
+
+  document.getElementById("form-verrou").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var saisie = document.getElementById("code").value.toUpperCase().replace(/\s+/g, "");
+    var erreur = document.getElementById("erreur");
+    sha256(saisie).then(function (h) {
+      if (h === HASH_ATTENDU) {
+        document.getElementById("verrou").style.display = "none";
+        document.getElementById("contenu").classList.add("visible");
+        document.body.style.overflow = "";
+      } else {
+        erreur.textContent = "Code incorrect. Vérifiez le code communiqué.";
+      }
+    });
+  });
+  document.body.style.overflow = "hidden";
+})();
+</script>
+
+</body>
+</html>

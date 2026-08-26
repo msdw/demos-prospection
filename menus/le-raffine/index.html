@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Raffiné — Démo de carte redesignée</title>
+<style>
+  :root {
+    --charbon: #1d1a17;
+    --brique: #c14b2a;
+    --brique-clair: #e06a45;
+    --sable: #f7f1e6;
+    --curry: #e0a32e;
+    --ligne: #e4d9c6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: var(--sable);
+    color: var(--charbon);
+    line-height: 1.6;
+  }
+
+  /* ---------- Écran de verrouillage ---------- */
+  .verrou {
+    position: fixed; inset: 0; z-index: 100;
+    background: var(--charbon);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem;
+  }
+  .verrou-carte {
+    background: var(--sable);
+    max-width: 420px; width: 100%;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    border-radius: 14px;
+    border-top: 5px solid var(--brique);
+  }
+  .verrou-carte h1 {
+    font-weight: 800; font-size: 1.6rem; letter-spacing: 0.02em;
+    text-transform: uppercase; margin-bottom: 0.4rem;
+  }
+  .verrou-carte .sur {
+    font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--brique); margin-bottom: 0.8rem; font-weight: 700;
+  }
+  .verrou-carte p { font-size: 0.9rem; color: #6f6455; margin-bottom: 1.4rem; }
+  .verrou-carte input {
+    width: 100%; padding: 0.7rem 0.9rem;
+    font-size: 1rem; text-align: center; letter-spacing: 0.15em;
+    border: 2px solid var(--ligne); border-radius: 8px;
+    background: #fff; color: var(--charbon);
+    margin-bottom: 0.8rem; text-transform: uppercase;
+  }
+  .verrou-carte button {
+    width: 100%; padding: 0.75rem; border-radius: 8px;
+    background: var(--brique); color: #fff; border: none; cursor: pointer;
+    font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 700;
+  }
+  .verrou-carte button:hover { background: var(--brique-clair); }
+  .verrou-erreur { color: #a03a2a; font-size: 0.82rem; min-height: 1.2em; margin-top: 0.7rem; }
+
+  /* ---------- Filigrane ---------- */
+  .filigrane {
+    position: fixed; inset: -50%; z-index: 60;
+    pointer-events: none; overflow: hidden;
+    display: flex; flex-wrap: wrap; align-content: space-around; justify-content: space-around;
+    transform: rotate(-24deg);
+  }
+  .filigrane span {
+    font-weight: 800;
+    font-size: 1.25rem; letter-spacing: 0.25em; white-space: nowrap;
+    color: rgba(193, 75, 42, 0.08);
+    padding: 2.2rem 1.5rem; text-transform: uppercase;
+  }
+
+  .contenu { display: none; }
+  .contenu.visible { display: block; }
+
+  .bandeau-demo {
+    background: var(--charbon);
+    color: #e8ddca;
+    text-align: center;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.55rem 1rem;
+  }
+
+  .carte { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 3rem; }
+
+  header { text-align: center; margin-bottom: 2.8rem; }
+  .sur-titre {
+    display: inline-block;
+    font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 700;
+    color: #fff; background: var(--brique);
+    padding: 0.35rem 0.9rem; border-radius: 999px;
+    margin-bottom: 1.1rem;
+  }
+  h1.titre {
+    font-weight: 800;
+    font-size: clamp(2.2rem, 7vw, 3.4rem);
+    text-transform: uppercase; letter-spacing: 0.02em;
+  }
+  .sous-titre { color: #6f6455; font-size: 1rem; margin-top: 0.5rem; }
+  .coordonnees { margin-top: 1rem; font-size: 0.8rem; letter-spacing: 0.08em; color: #998d7c; }
+  .badge-halal {
+    display: inline-block; margin-top: 0.9rem;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--charbon); border: 2px solid var(--curry);
+    padding: 0.3rem 0.8rem; border-radius: 999px;
+  }
+
+  section { margin-bottom: 2.8rem; }
+  h2 {
+    font-weight: 800; font-size: 1.3rem;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    margin-bottom: 0.4rem;
+    display: flex; align-items: center; gap: 0.8rem;
+  }
+  h2::after { content: ""; flex: 1; height: 3px; background: var(--curry); border-radius: 2px; }
+  .section-note { font-size: 0.85rem; font-style: italic; color: #998d7c; margin-bottom: 1.4rem; }
+
+  .grille { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .item {
+    background: #fff; border: 1px solid var(--ligne); border-radius: 12px;
+    padding: 1.1rem 1.2rem;
+    display: flex; flex-direction: column; gap: 0.3rem;
+  }
+  .item-haut { display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem; }
+  .item .nom { font-weight: 700; font-size: 1.02rem; }
+  .item .prix {
+    font-weight: 800; color: var(--brique); white-space: nowrap; font-size: 1.05rem;
+  }
+  .item .detail { font-size: 0.85rem; color: #6f6455; }
+  .item .tag {
+    align-self: flex-start;
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    background: var(--charbon); color: var(--curry);
+    padding: 0.2rem 0.6rem; border-radius: 999px;
+  }
+
+  .note-carte {
+    text-align: center; font-size: 0.85rem; font-style: italic; color: #998d7c;
+    border-top: 2px dashed var(--ligne); padding-top: 1.6rem; margin-top: 1rem;
+  }
+
+  .mention-reconstitution {
+    max-width: 760px; margin: 0 auto; padding: 0 1.5rem 2rem;
+    text-align: center; font-size: 0.72rem; color: #b0a592; letter-spacing: 0.04em;
+  }
+
+  /* ---------- Footer CTA ---------- */
+  .cta {
+    background: var(--charbon); color: var(--sable);
+    text-align: center; padding: 3rem 1.5rem;
+  }
+  .cta h3 { font-weight: 800; font-size: 1.4rem; text-transform: uppercase; margin-bottom: 0.8rem; }
+  .cta .offre { font-size: 1rem; margin-bottom: 1.6rem; color: #d9cbb2; }
+  .cta .offre strong { color: var(--curry); }
+  .cta .contact { font-size: 0.9rem; line-height: 1.9; color: #bdae94; }
+  .cta .contact a { color: #fff; text-decoration: none; border-bottom: 1px solid var(--brique); }
+  .cta .contact .nom { font-size: 1rem; color: #fff; letter-spacing: 0.08em; font-weight: 700; }
+
+  @media (max-width: 560px) {
+    .grille { grid-template-columns: 1fr; }
+    .carte { padding: 2.2rem 1.1rem 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="verrou" id="verrou">
+  <div class="verrou-carte">
+    <p class="sur">Démo privée</p>
+    <h1>Le Raffiné</h1>
+    <p>Cette proposition de redesign de carte est protégée.<br>Saisissez le code d'accès communiqué par votre contact.</p>
+    <form id="form-verrou">
+      <input type="text" id="code" autocomplete="off" placeholder="CODE D'ACCÈS" aria-label="Code d'accès">
+      <button type="submit">Déverrouiller la démo</button>
+    </form>
+    <p class="verrou-erreur" id="erreur"></p>
+  </div>
+</div>
+
+<div class="filigrane" id="filigrane" aria-hidden="true"></div>
+
+<div class="contenu" id="contenu">
+
+<div class="bandeau-demo">Démo — proposition de redesign, offerte sans engagement</div>
+
+<div class="carte">
+
+  <header>
+    <p class="sur-titre">Délices Tacos &amp; Burger</p>
+    <h1 class="titre">Le Raffiné</h1>
+    <p class="sous-titre">Street-food généreuse, tajines et couscous maison sur place</p>
+    <p class="coordonnees">17 rue de la Rabotière, 44800 Saint-Herblain</p>
+    <p class="badge-halal">Cuisine halal</p>
+  </header>
+
+  <section>
+    <h2>Menus burgers</h2>
+    <p class="section-note">Exemples de la carte — servis en menu</p>
+    <div class="grille">
+      <div class="item">
+        <div class="item-haut"><span class="nom">Menus burgers</span><span class="prix">12,50&nbsp;€ – 13,00&nbsp;€</span></div>
+        <p class="detail">Formules menu, selon carte en ligne</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Sandwichs</h2>
+    <p class="section-note">Exemples de la carte — servis en menu</p>
+    <div class="grille">
+      <div class="item">
+        <span class="tag">Best-seller</span>
+        <div class="item-haut"><span class="nom">Sandwich kebab en menu</span><span class="prix">11,50&nbsp;€</span></div>
+        <p class="detail">Le plus commandé de la carte en ligne</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Tacos</h2>
+    <p class="section-note">Exemples de la carte — trois tailles</p>
+    <div class="grille">
+      <div class="item">
+        <div class="item-haut"><span class="nom">Tacos M · L · XL</span><span class="prix">12,50&nbsp;€ – 15,50&nbsp;€</span></div>
+        <p class="detail">Trois tailles au choix — prix selon la taille, voir carte en ligne</p>
+      </div>
+      <div class="item">
+        <div class="item-haut"><span class="nom">Boisson</span><span class="prix">3,00&nbsp;€</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Sur place</h2>
+    <p class="section-note">Servis au restaurant</p>
+    <div class="grille">
+      <div class="item">
+        <div class="item-haut"><span class="nom">Tajines</span><span class="prix">sur place</span></div>
+        <p class="detail">Servis sur place — prix affichés au restaurant</p>
+      </div>
+      <div class="item">
+        <div class="item-haut"><span class="nom">Couscous</span><span class="prix">sur place</span></div>
+        <p class="detail">Servi sur place — prix affiché au restaurant</p>
+      </div>
+    </div>
+  </section>
+
+  <p class="note-carte">
+    Carte reconstituée à partir de la carte en ligne (livraison) — horaires et disponibilité à vérifier auprès du restaurant.
+  </p>
+
+</div>
+
+<p class="mention-reconstitution">
+  Carte reconstituée à partir d'informations publiques — chaque plat, prix et allergène sera validé par le restaurateur avant diffusion.
+</p>
+
+<footer class="cta">
+  <h3>Cette démo vous plaît&nbsp;?</h3>
+  <p class="offre">Version finalisée (print + mobile + QR code)&nbsp;: <strong>300&nbsp;€ une fois, sans abonnement</strong>.</p>
+  <p class="contact">
+    <span class="nom">Arnaud ACHE — Mathurin ACHE ARNAUD</span><br>
+    <a href="mailto:mathurin.ache@maaihub.com">mathurin.ache@maaihub.com</a><br>
+    <a href="tel:+33683959720">06.83.95.97.20</a>
+  </p>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  var HASH_ATTENDU = "a2524f45b518e8fb39835aa2caa457eb92a25ca74bbe2af88c37590dd1f82cac";
+  var NOM = "DÉMO — Le Raffiné";
+
+  var fg = document.getElementById("filigrane");
+  var html = "";
+  for (var i = 0; i < 120; i++) html += "<span>" + NOM + "</span>";
+  fg.innerHTML = html;
+
+  function sha256(texte) {
+    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(texte)).then(function (buf) {
+      return Array.prototype.map.call(new Uint8Array(buf), function (o) {
+        return ("0" + o.toString(16)).slice(-2);
+      }).join("");
+    });
+  }
+
+  document.getElementById("form-verrou").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var saisie = document.getElementById("code").value.toUpperCase().replace(/\s+/g, "");
+    var erreur = document.getElementById("erreur");
+    sha256(saisie).then(function (h) {
+      if (h === HASH_ATTENDU) {
+        document.getElementById("verrou").style.display = "none";
+        document.getElementById("contenu").classList.add("visible");
+        document.body.style.overflow = "";
+      } else {
+        erreur.textContent = "Code incorrect. Vérifiez le code communiqué.";
+      }
+    });
+  });
+  document.body.style.overflow = "hidden";
+})();
+</script>
+
+</body>
+</html>

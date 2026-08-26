@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>L'EFFET DECO — Peintre en bâtiment à Saint-Herblain</title>
+<style>
+:root{--accent:#c2410c;--accent2:#fdba74;--dark:#431407;}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#1f2937;background:#f8fafc;line-height:1.6}
+img{max-width:100%}
+a{color:inherit}
+
+/* --- Ecran de verrouillage --- */
+#lock{position:fixed;inset:0;z-index:100;background:linear-gradient(160deg,var(--dark),#0f172a);display:flex;align-items:center;justify-content:center;padding:1.5rem}
+#lock .card{background:#fff;border-radius:16px;padding:2rem;max-width:380px;width:100%;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,.4)}
+#lock h1{font-size:1.15rem;color:var(--dark);margin-bottom:.4rem}
+#lock p{font-size:.85rem;color:#6b7280;margin-bottom:1.2rem}
+#code{width:100%;padding:.9rem;font-size:1.05rem;text-align:center;letter-spacing:.15em;border:2px solid #d1d5db;border-radius:10px;text-transform:uppercase}
+#code:focus{outline:none;border-color:var(--accent)}
+#unlock{width:100%;margin-top:.8rem;padding:.9rem;font-size:1rem;font-weight:600;color:#fff;background:var(--accent);border:none;border-radius:10px;cursor:pointer}
+#err{display:none;color:#dc2626;font-size:.85rem;margin-top:.7rem}
+#lock .hint{margin-top:1.2rem;font-size:.75rem;color:#9ca3af}
+
+/* --- Filigrane --- */
+#watermark{position:fixed;inset:0;z-index:90;pointer-events:none;overflow:hidden;display:flex;flex-wrap:wrap;align-content:space-around;justify-content:space-around;transform:rotate(-25deg) scale(1.4)}
+#watermark span{font-size:1.1rem;font-weight:700;color:var(--dark);opacity:.06;white-space:nowrap;padding:2.2rem 2.6rem}
+
+/* --- Bandeau demo --- */
+#banner{position:sticky;top:0;z-index:80;background:#111827;color:#f9fafb;text-align:center;font-size:.82rem;padding:.55rem 1rem}
+#banner strong{color:var(--accent2)}
+
+/* --- Layout --- */
+.wrap{max-width:720px;margin:0 auto;padding:0 1.2rem}
+section{padding:2.6rem 0}
+
+/* --- Hero --- */
+#hero{background:linear-gradient(150deg,var(--dark) 0%,var(--accent) 130%);color:#fff;text-align:center;padding:4rem 1.2rem 3.4rem}
+#hero .badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:.3rem 1rem;font-size:.8rem;margin-bottom:1.1rem}
+#hero h1{font-size:clamp(1.9rem,6vw,2.8rem);line-height:1.15;margin-bottom:.5rem}
+#hero .sub{font-size:1.05rem;opacity:.92;margin-bottom:2rem}
+.cta-row{display:flex;flex-direction:column;gap:.9rem;max-width:340px;margin:0 auto}
+.btn{display:block;padding:1.05rem 1.4rem;border-radius:12px;font-size:1.1rem;font-weight:700;text-decoration:none;text-align:center}
+.btn-call{background:#fff;color:var(--dark);box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.btn-quote{background:var(--accent2);color:var(--dark)}
+.btn-note{font-size:.78rem;opacity:.75;margin-top:1rem}
+
+/* --- Preuve sociale --- */
+#proof{text-align:center}
+.stars{color:#f59e0b;font-size:1.6rem;letter-spacing:.2rem}
+#proof .score{font-size:2.6rem;font-weight:800;color:var(--dark)}
+#proof p{color:#4b5563}
+
+/* --- Services --- */
+#services ul{list-style:none;display:grid;gap:.7rem}
+#services li{background:#fff;border:1px solid #e5e7eb;border-left:4px solid var(--accent);border-radius:10px;padding:.95rem 1.1rem;font-weight:500}
+h2{font-size:1.4rem;color:var(--dark);margin-bottom:1.2rem;text-align:center}
+
+/* --- Zone / horaires --- */
+.two{display:grid;gap:1rem}
+@media(min-width:600px){.two{grid-template-columns:1fr 1fr}}
+.panel{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:1.3rem}
+.panel h3{font-size:1rem;color:var(--accent);margin-bottom:.5rem}
+.panel p{font-size:.92rem;color:#4b5563}
+
+/* --- Footer --- */
+footer{background:var(--dark);color:#e5e7eb;text-align:center;padding:2.6rem 1.2rem 7rem}
+footer .offer{font-size:1.05rem;font-weight:600;color:#fff;margin:.8rem 0}
+footer .offer strong{color:var(--accent2)}
+footer p{font-size:.9rem;margin:.3rem 0}
+footer a{color:var(--accent2);text-decoration:none}
+
+/* --- Barre d'appel mobile --- */
+#callbar{position:fixed;bottom:0;left:0;right:0;z-index:85;background:var(--accent);padding:.7rem;display:none}
+#callbar a{display:block;text-align:center;color:#fff;font-weight:700;font-size:1.05rem;text-decoration:none}
+@media(max-width:600px){#callbar{display:block}}
+</style>
+</head>
+<body>
+
+<div id="lock">
+  <div class="card">
+    <h1>Démo privée — L'EFFET DECO</h1>
+    <p>Cette page est une démo confidentielle.<br>Saisissez le code d'accès qui vous a été transmis.</p>
+    <input id="code" type="text" autocomplete="off" placeholder="CODE D'ACCÈS" aria-label="Code d'accès">
+    <button id="unlock">Déverrouiller la démo</button>
+    <p id="err">Code incorrect — vérifiez le code reçu par email ou SMS.</p>
+    <p class="hint">Démo préparée par Arnaud ACHE — 06 83 95 97 20</p>
+  </div>
+</div>
+
+<div id="watermark" aria-hidden="true"></div>
+
+<div id="banner">🔒 <strong>DÉMO</strong> — votre futur site, déjà prêt. Offert sans engagement.</div>
+
+<main id="content" hidden>
+
+  <section id="hero">
+    <span class="badge">Peintre en bâtiment — Saint-Herblain</span>
+    <h1>L'EFFET DECO</h1>
+    <p class="sub">Peinture intérieure et extérieure — des finitions soignées pour un intérieur qui vous ressemble.</p>
+    <div class="cta-row">
+      <a class="btn btn-call" href="tel:+33643268298">📞 Appeler — 06 43 26 82 98</a>
+      <a class="btn btn-quote" href="mailto:mathurin.ache@maaihub.com?subject=Devis%%20%20L%27EFFET%20DECO">Demander un devis</a>
+    </div>
+    <p class="btn-note">Démo : le bouton « Demander un devis » écrit pour l'instant à l'agence. Sur votre version finale, il arrivera directement dans VOTRE boîte mail.</p>
+  </section>
+
+  <section id="proof">
+    <div class="wrap">
+      <div class="stars">★★★★★</div>
+      <div class="score">5,0 / 5</div>
+      <p>Note Google — basée sur <strong>17 avis clients</strong></p>
+    </div>
+  </section>
+
+  <section id="services">
+    <div class="wrap">
+      <h2>Nos services</h2>
+      <ul>
+        <li>Peinture intérieure (murs, plafonds, boiseries)</li>
+        <li>Peinture extérieure et façades</li>
+        <li>Enduits et préparation des supports</li>
+        <li>Papier peint et revêtements muraux</li>
+        <li>Conseil couleurs et décoration</li>
+        <li>Chantier propre et soigné, devis gratuit</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="two">
+        <div class="panel">
+          <h3>📍 Zone d'intervention</h3>
+          <p>Saint-Herblain, Orvault, Nantes et toute la métropole nantaise.</p>
+          <p style="margin-top:.5rem;font-size:.82rem;color:#9ca3af">12 Av. de la Branchoire, 44800 Saint-Herblain</p>
+        </div>
+        <div class="panel">
+          <h3>🕒 Horaires</h3>
+          <p>Interventions <strong>sur rendez-vous</strong>, du lundi au samedi.<br>Urgences : appelez directement au 06 43 26 82 98.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer id="footer" hidden>
+  <div class="wrap">
+    <p>Ce site est <strong>déjà construit</strong>.</p>
+    <p class="offer">Clé en main : <strong>500 €</strong> une fois + maintenance optionnelle <strong>200 €/mois</strong><br><span style="font-size:.85rem;font-weight:400">(mises à jour, photos, fiche Google, sécurité)</span></p>
+    <p>Contact : <strong>Arnaud ACHE</strong> — <a href="tel:+33683959720">06.83.95.97.20</a> — <a href="mailto:mathurin.ache@maaihub.com">mathurin.ache@maaihub.com</a></p>
+  </div>
+</footer>
+
+<script>
+var HASH = "1b5e404826f717a39bd22c133b7e702b110960e9068f834c33e3e134830c83d8";
+var WM_TEXT = "DÉMO — L'EFFET DECO";
+
+// Filigrane répété en diagonale
+(function(){
+  var wm = document.getElementById('watermark');
+  for (var i = 0; i < 60; i++) {
+    var s = document.createElement('span');
+    s.textContent = WM_TEXT;
+    wm.appendChild(s);
+  }
+})();
+
+async function sha256Hex(text) {
+  var data = new TextEncoder().encode(text);
+  var buf = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+}
+
+async function tryUnlock() {
+  var input = document.getElementById('code').value.toUpperCase().replace(/\s+/g, '');
+  if (!input) return;
+  try {
+    var h = await sha256Hex(input);
+    if (h === HASH) {
+      document.getElementById('lock').style.display = 'none';
+      document.getElementById('content').hidden = false;
+      document.getElementById('footer').hidden = false;
+      document.title = document.title.replace(' (démo)', '');
+    } else {
+      document.getElementById('err').style.display = 'block';
+    }
+  } catch (e) {
+    document.getElementById('err').textContent = "Votre navigateur ne permet pas la vérification ici : ouvrez le lien en HTTPS.";
+    document.getElementById('err').style.display = 'block';
+  }
+}
+
+document.getElementById('unlock').addEventListener('click', tryUnlock);
+document.getElementById('code').addEventListener('keydown', function(e){ if (e.key === 'Enter') tryUnlock(); });
+</script>
+</body>
+</html>

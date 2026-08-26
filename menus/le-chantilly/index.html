@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Chantilly — Démo de carte redesignée</title>
+<style>
+  :root {
+    --brun: #2e2118;
+    --bordeaux: #7a2e2e;
+    --moutarde: #d9a441;
+    --creme: #f6efe3;
+    --vinyle: #40302a;
+    --ligne: #ddcfb8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: var(--creme);
+    color: var(--brun);
+    line-height: 1.6;
+  }
+
+  /* ---------- Écran de verrouillage ---------- */
+  .verrou {
+    position: fixed; inset: 0; z-index: 100;
+    background: var(--vinyle);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem;
+  }
+  .verrou-carte {
+    background: var(--creme);
+    max-width: 420px; width: 100%;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    border-radius: 6px;
+    border-top: 5px solid var(--moutarde);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .verrou-carte h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 700; font-size: 1.6rem; color: var(--bordeaux);
+    margin-bottom: 0.4rem;
+  }
+  .verrou-carte .sur {
+    font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--moutarde); margin-bottom: 0.8rem; font-weight: 700;
+  }
+  .verrou-carte p { font-size: 0.9rem; color: #71624f; margin-bottom: 1.4rem; }
+  .verrou-carte input {
+    width: 100%; padding: 0.7rem 0.9rem;
+    font-size: 1rem; text-align: center; letter-spacing: 0.15em;
+    border: 2px solid var(--ligne); border-radius: 4px;
+    background: #fff; color: var(--brun);
+    margin-bottom: 0.8rem; text-transform: uppercase;
+  }
+  .verrou-carte button {
+    width: 100%; padding: 0.75rem; border-radius: 4px;
+    background: var(--bordeaux); color: #fff; border: none; cursor: pointer;
+    font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 700;
+  }
+  .verrou-carte button:hover { background: #8f3a3a; }
+  .verrou-erreur { color: #a03a2a; font-size: 0.82rem; min-height: 1.2em; margin-top: 0.7rem; }
+
+  /* ---------- Filigrane ---------- */
+  .filigrane {
+    position: fixed; inset: -50%; z-index: 60;
+    pointer-events: none; overflow: hidden;
+    display: flex; flex-wrap: wrap; align-content: space-around; justify-content: space-around;
+    transform: rotate(-24deg);
+  }
+  .filigrane span {
+    font-family: Georgia, "Times New Roman", serif; font-weight: 700;
+    font-size: 1.25rem; letter-spacing: 0.25em; white-space: nowrap;
+    color: rgba(122, 46, 46, 0.08);
+    padding: 2.2rem 1.5rem; text-transform: uppercase;
+  }
+
+  .contenu { display: none; }
+  .contenu.visible { display: block; }
+
+  .bandeau-demo {
+    background: var(--vinyle);
+    color: #e3d5bd;
+    text-align: center;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.55rem 1rem;
+  }
+
+  .carte { max-width: 720px; margin: 0 auto; padding: 3.2rem 1.5rem 3rem; }
+
+  header { text-align: center; margin-bottom: 2.8rem; }
+  .vinyle {
+    width: 92px; height: 92px; margin: 0 auto 1.2rem;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle, var(--moutarde) 0 14px, var(--brun) 14px 16px,
+        transparent 16px),
+      repeating-radial-gradient(circle, var(--vinyle) 0 4px, var(--brun) 4px 6px);
+    border: 3px solid var(--brun);
+  }
+  .sur-titre {
+    font-size: 0.75rem; letter-spacing: 0.35em; text-transform: uppercase;
+    color: var(--moutarde); margin-bottom: 0.9rem; font-weight: 700;
+  }
+  h1.titre {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 700;
+    font-size: clamp(2.2rem, 6vw, 3.2rem);
+    color: var(--bordeaux);
+  }
+  .sous-titre {
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic; color: #71624f; font-size: 1.02rem; margin-top: 0.5rem;
+  }
+  .coordonnees { margin-top: 1rem; font-size: 0.8rem; letter-spacing: 0.08em; color: #998b74; }
+
+  section { margin-bottom: 2.8rem; }
+  h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 700; font-size: 1.3rem; color: var(--bordeaux);
+    text-align: center; letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .section-note {
+    text-align: center; font-size: 0.85rem; font-style: italic;
+    color: #998b74; margin-bottom: 1.6rem;
+  }
+
+  .ardoise {
+    background: #fff;
+    border: 2px solid var(--brun);
+    border-radius: 6px;
+    box-shadow: 5px 5px 0 var(--moutarde);
+    padding: 1.8rem 1.5rem;
+  }
+  .ligne-prix {
+    display: flex; align-items: baseline; gap: 0.6rem;
+    padding: 0.55rem 0; flex-wrap: wrap;
+  }
+  .ligne-prix .nom { font-weight: 700; }
+  .ligne-prix .detail { color: #998b74; font-size: 0.85rem; }
+  .ligne-prix .points { flex: 1; border-bottom: 2px dotted #cbb894; transform: translateY(-4px); min-width: 2rem; }
+  .ligne-prix .prix {
+    font-family: Georgia, "Times New Roman", serif; font-weight: 700;
+    font-size: 1.08rem; color: var(--bordeaux); white-space: nowrap;
+  }
+
+  .note-carte {
+    text-align: center; font-size: 0.85rem; font-style: italic; color: #998b74;
+    border-top: 2px dashed var(--ligne); padding-top: 1.6rem; margin-top: 1rem;
+  }
+
+  .mention-reconstitution {
+    max-width: 720px; margin: 0 auto; padding: 0 1.5rem 2rem;
+    text-align: center; font-size: 0.72rem; color: #b0a48e; letter-spacing: 0.04em;
+  }
+
+  /* ---------- Footer CTA ---------- */
+  .cta {
+    background: var(--vinyle); color: var(--creme);
+    text-align: center; padding: 3rem 1.5rem;
+    border-top: 5px solid var(--moutarde);
+  }
+  .cta h3 {
+    font-family: Georgia, "Times New Roman", serif; font-weight: 700;
+    font-size: 1.4rem; margin-bottom: 0.8rem;
+  }
+  .cta .offre { font-size: 1rem; margin-bottom: 1.6rem; color: #ddcfb6; }
+  .cta .offre strong { color: var(--moutarde); }
+  .cta .contact { font-size: 0.9rem; line-height: 1.9; color: #c4b49a; }
+  .cta .contact a { color: #fff; text-decoration: none; border-bottom: 1px solid var(--moutarde); }
+  .cta .contact .nom { font-size: 1rem; color: #fff; letter-spacing: 0.08em; font-weight: 700; }
+
+  @media (max-width: 480px) {
+    .carte { padding: 2.2rem 1.1rem 2rem; }
+    .ardoise { padding: 1.3rem 1rem; box-shadow: 3px 3px 0 var(--moutarde); }
+    .ligne-prix .detail { display: block; }
+  }
+</style>
+</head>
+<body>
+
+<div class="verrou" id="verrou">
+  <div class="verrou-carte">
+    <p class="sur">Démo privée</p>
+    <h1>Le Chantilly</h1>
+    <p>Cette proposition de redesign de carte est protégée.<br>Saisissez le code d'accès communiqué par votre contact.</p>
+    <form id="form-verrou">
+      <input type="text" id="code" autocomplete="off" placeholder="CODE D'ACCÈS" aria-label="Code d'accès">
+      <button type="submit">Déverrouiller la démo</button>
+    </form>
+    <p class="verrou-erreur" id="erreur"></p>
+  </div>
+</div>
+
+<div class="filigrane" id="filigrane" aria-hidden="true"></div>
+
+<div class="contenu" id="contenu">
+
+<div class="bandeau-demo">Démo — proposition de redesign, offerte sans engagement</div>
+
+<div class="carte">
+
+  <header>
+    <div class="vinyle" aria-hidden="true"></div>
+    <p class="sur-titre">Bar-brasserie de quartier</p>
+    <h1 class="titre">Le Chantilly</h1>
+    <p class="sous-titre">Thierry et Valérie vous accueillent — cuisine maison, ambiance vinyles et guitares</p>
+    <p class="coordonnees">58 avenue de la Morlière, 44700 Orvault</p>
+  </header>
+
+  <section>
+    <h2>Les formules</h2>
+    <p class="section-note">Exemples de l'ardoise</p>
+    <div class="ardoise">
+      <div class="ligne-prix">
+        <span class="nom">Formule</span>
+        <span class="points"></span>
+        <span class="prix">15,50&nbsp;€</span>
+      </div>
+      <div class="ligne-prix">
+        <span class="nom">Grande formule</span>
+        <span class="points"></span>
+        <span class="prix">18,50&nbsp;€</span>
+      </div>
+      <div class="ligne-prix">
+        <span class="nom">Entrée + plat</span>
+        <span class="points"></span>
+        <span class="prix">16,00&nbsp;€</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>À l'ardoise</h2>
+    <p class="section-note">Exemples de l'ardoise — cuisine maison</p>
+    <div class="ardoise">
+      <div class="ligne-prix">
+        <span class="nom">Plat du jour ou pièce du boucher</span>
+        <span class="points"></span>
+        <span class="prix">11,50&nbsp;€</span>
+      </div>
+      <div class="ligne-prix">
+        <span class="nom">Plats spéciaux</span>
+        <span class="detail">— couscous, parmentier de canard</span>
+        <span class="points"></span>
+        <span class="prix">19,00&nbsp;€</span>
+      </div>
+      <div class="ligne-prix">
+        <span class="nom">Cabécero au poivre vert</span>
+        <span class="points"></span>
+        <span class="prix">15,00&nbsp;€</span>
+      </div>
+      <div class="ligne-prix">
+        <span class="nom">Dessert maison</span>
+        <span class="points"></span>
+        <span class="prix">4,00&nbsp;€</span>
+      </div>
+    </div>
+  </section>
+
+  <p class="note-carte">
+    Prix relevés sur l'ardoise 2024–2025 — à revalider avec Thierry et Valérie.
+  </p>
+
+</div>
+
+<p class="mention-reconstitution">
+  Carte reconstituée à partir d'informations publiques — chaque plat, prix et allergène sera validé par le restaurateur avant diffusion.
+</p>
+
+<footer class="cta">
+  <h3>Cette démo vous plaît&nbsp;?</h3>
+  <p class="offre">Version finalisée (print + mobile + QR code)&nbsp;: <strong>300&nbsp;€ une fois, sans abonnement</strong>.</p>
+  <p class="contact">
+    <span class="nom">Arnaud ACHE — Mathurin ACHE ARNAUD</span><br>
+    <a href="mailto:mathurin.ache@maaihub.com">mathurin.ache@maaihub.com</a><br>
+    <a href="tel:+33683959720">06.83.95.97.20</a>
+  </p>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  var HASH_ATTENDU = "3bf43114b6ca479ba7c0d954ac12294d8367d05525f179dc575bfae15da46b1a";
+  var NOM = "DÉMO — Le Chantilly";
+
+  var fg = document.getElementById("filigrane");
+  var html = "";
+  for (var i = 0; i < 120; i++) html += "<span>" + NOM + "</span>";
+  fg.innerHTML = html;
+
+  function sha256(texte) {
+    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(texte)).then(function (buf) {
+      return Array.prototype.map.call(new Uint8Array(buf), function (o) {
+        return ("0" + o.toString(16)).slice(-2);
+      }).join("");
+    });
+  }
+
+  document.getElementById("form-verrou").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var saisie = document.getElementById("code").value.toUpperCase().replace(/\s+/g, "");
+    var erreur = document.getElementById("erreur");
+    sha256(saisie).then(function (h) {
+      if (h === HASH_ATTENDU) {
+        document.getElementById("verrou").style.display = "none";
+        document.getElementById("contenu").classList.add("visible");
+        document.body.style.overflow = "";
+      } else {
+        erreur.textContent = "Code incorrect. Vérifiez le code communiqué.";
+      }
+    });
+  });
+  document.body.style.overflow = "hidden";
+})();
+</script>
+
+</body>
+</html>
