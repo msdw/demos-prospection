@@ -3,64 +3,84 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
 <title>Le Chantilly — Démo de carte redesignée</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Jost:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
     --brun: #2e2118;
     --bordeaux: #7a2e2e;
+    --bordeaux-fonce: #5f2323;
     --moutarde: #d9a441;
+    --moutarde-clair: #ecc987;
     --creme: #f6efe3;
+    --creme-fonce: #ece0ca;
     --vinyle: #40302a;
+    --vinyle-fonce: #2c201b;
     --ligne: #ddcfb8;
+    --gris: #8f8271;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
   body {
-    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-    background: var(--creme);
+    font-family: "Jost", "Segoe UI", sans-serif;
+    font-weight: 300;
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(217,164,65,0.08) 0%, transparent 45%),
+      var(--creme);
     color: var(--brun);
-    line-height: 1.6;
+    line-height: 1.65;
   }
 
   /* ---------- Écran de verrouillage ---------- */
   .verrou {
     position: fixed; inset: 0; z-index: 100;
-    background: var(--vinyle);
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(217,164,65,0.16) 0%, transparent 55%),
+      linear-gradient(165deg, var(--vinyle) 0%, var(--vinyle-fonce) 100%);
     display: flex; align-items: center; justify-content: center;
     padding: 1.5rem;
   }
   .verrou-carte {
     background: var(--creme);
-    max-width: 420px; width: 100%;
-    padding: 2.5rem 2rem;
+    max-width: 440px; width: 100%;
+    padding: 2.9rem 2.3rem 2.6rem;
     text-align: center;
-    border-radius: 6px;
-    border-top: 5px solid var(--moutarde);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    border-radius: 8px;
+    border-top: 6px solid var(--moutarde);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
   }
   .verrou-carte h1 {
-    font-family: Georgia, "Times New Roman", serif;
-    font-weight: 700; font-size: 1.6rem; color: var(--bordeaux);
-    margin-bottom: 0.4rem;
+    font-family: "Abril Fatface", Georgia, serif;
+    font-weight: 400; font-size: 1.9rem; color: var(--bordeaux);
+    margin-bottom: 0.5rem;
   }
   .verrou-carte .sur {
-    font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase;
-    color: var(--moutarde); margin-bottom: 0.8rem; font-weight: 700;
+    font-size: 0.68rem; letter-spacing: 0.34em; text-transform: uppercase;
+    color: var(--bordeaux); margin-bottom: 0.9rem; font-weight: 600;
   }
-  .verrou-carte p { font-size: 0.9rem; color: #71624f; margin-bottom: 1.4rem; }
+  .verrou-carte p { font-size: 0.92rem; color: #71624f; margin-bottom: 1.5rem; }
   .verrou-carte input {
-    width: 100%; padding: 0.7rem 0.9rem;
-    font-size: 1rem; text-align: center; letter-spacing: 0.15em;
-    border: 2px solid var(--ligne); border-radius: 4px;
+    width: 100%; padding: 0.8rem 0.9rem;
+    font-family: "Jost", sans-serif;
+    font-size: 1rem; text-align: center; letter-spacing: 0.2em;
+    border: 2px solid var(--ligne); border-radius: 6px;
     background: #fff; color: var(--brun);
     margin-bottom: 0.8rem; text-transform: uppercase;
+    transition: border-color 0.25s, box-shadow 0.25s;
   }
+  .verrou-carte input:focus { outline: none; border-color: var(--moutarde); box-shadow: 0 0 0 4px rgba(217,164,65,0.18); }
   .verrou-carte button {
-    width: 100%; padding: 0.75rem; border-radius: 4px;
-    background: var(--bordeaux); color: #fff; border: none; cursor: pointer;
-    font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 700;
+    width: 100%; padding: 0.9rem; border-radius: 6px;
+    background: linear-gradient(180deg, var(--bordeaux) 0%, var(--bordeaux-fonce) 100%);
+    color: #fff; border: none; cursor: pointer;
+    font-family: "Jost", sans-serif;
+    font-size: 0.82rem; letter-spacing: 0.26em; text-transform: uppercase; font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
   }
-  .verrou-carte button:hover { background: #8f3a3a; }
+  .verrou-carte button:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(122,46,46,0.4); }
   .verrou-erreur { color: #a03a2a; font-size: 0.82rem; min-height: 1.2em; margin-top: 0.7rem; }
 
   /* ---------- Filigrane ---------- */
@@ -71,7 +91,7 @@
     transform: rotate(-24deg);
   }
   .filigrane span {
-    font-family: Georgia, "Times New Roman", serif; font-weight: 700;
+    font-family: "Abril Fatface", Georgia, serif;
     font-size: 1.25rem; letter-spacing: 0.25em; white-space: nowrap;
     color: rgba(122, 46, 46, 0.08);
     padding: 2.2rem 1.5rem; text-transform: uppercase;
@@ -81,104 +101,184 @@
   .contenu.visible { display: block; }
 
   .bandeau-demo {
-    background: var(--vinyle);
+    background: var(--vinyle-fonce);
     color: #e3d5bd;
     text-align: center;
-    font-size: 0.72rem;
-    letter-spacing: 0.18em;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    padding: 0.55rem 1rem;
+    padding: 0.6rem 1rem;
   }
 
-  .carte { max-width: 720px; margin: 0 auto; padding: 3.2rem 1.5rem 3rem; }
+  .carte { max-width: 780px; margin: 0 auto; padding: 0 1.5rem 3.5rem; }
 
-  header { text-align: center; margin-bottom: 2.8rem; }
+  /* ---------- Hero ---------- */
+  .hero {
+    text-align: center;
+    margin: 2.5rem auto 3.2rem;
+    padding: 3rem 2rem 2.8rem;
+    background: linear-gradient(180deg, #fdf9f0 0%, var(--creme-fonce) 100%);
+    border: 2px solid var(--brun);
+    border-radius: 10px;
+    box-shadow: 7px 7px 0 var(--moutarde), 0 24px 50px rgba(46,33,24,0.14);
+  }
   .vinyle {
-    width: 92px; height: 92px; margin: 0 auto 1.2rem;
+    width: 104px; height: 104px; margin: 0 auto 1.4rem;
     border-radius: 50%;
     background:
-      radial-gradient(circle, var(--moutarde) 0 14px, var(--brun) 14px 16px,
-        transparent 16px),
+      radial-gradient(circle, var(--moutarde) 0 15px, var(--brun) 15px 17px,
+        transparent 17px),
       repeating-radial-gradient(circle, var(--vinyle) 0 4px, var(--brun) 4px 6px);
     border: 3px solid var(--brun);
+    box-shadow: 0 10px 24px rgba(46,33,24,0.3);
+    animation: tourne 14s linear infinite;
   }
+  @keyframes tourne { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .vinyle { animation: none; } }
   .sur-titre {
-    font-size: 0.75rem; letter-spacing: 0.35em; text-transform: uppercase;
-    color: var(--moutarde); margin-bottom: 0.9rem; font-weight: 700;
+    font-size: 0.72rem; letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--bordeaux); margin-bottom: 1.1rem; font-weight: 600;
   }
   h1.titre {
-    font-family: Georgia, "Times New Roman", serif;
-    font-weight: 700;
-    font-size: clamp(2.2rem, 6vw, 3.2rem);
+    font-family: "Abril Fatface", Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(2.6rem, 8vw, 3.9rem);
     color: var(--bordeaux);
+    line-height: 1.05;
   }
+  .ornement {
+    display: flex; align-items: center; justify-content: center; gap: 0.8rem;
+    margin: 1.3rem auto 1.2rem;
+  }
+  .ornement::before, .ornement::after { content: ""; width: 56px; height: 2px; background: var(--moutarde); border-radius: 2px; }
+  .ornement .note-musique { color: var(--moutarde); font-size: 1.1rem; }
   .sous-titre {
-    font-family: Georgia, "Times New Roman", serif;
-    font-style: italic; color: #71624f; font-size: 1.02rem; margin-top: 0.5rem;
+    font-style: italic; font-weight: 300;
+    color: #71624f; font-size: 1.08rem;
+    max-width: 32rem; margin: 0 auto;
   }
-  .coordonnees { margin-top: 1rem; font-size: 0.8rem; letter-spacing: 0.08em; color: #998b74; }
+  .badges { margin-top: 1.5rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.55rem; }
+  .badge {
+    font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600;
+    color: var(--vinyle); border: 2px solid var(--moutarde);
+    background: rgba(255,255,255,0.65);
+    padding: 0.4rem 0.95rem; border-radius: 999px;
+  }
+  .badge.plein { background: var(--bordeaux); color: #fff; border-color: var(--bordeaux); }
 
-  section { margin-bottom: 2.8rem; }
+  /* ---------- Sections ---------- */
+  section { margin-bottom: 3.2rem; }
   h2 {
-    font-family: Georgia, "Times New Roman", serif;
-    font-weight: 700; font-size: 1.3rem; color: var(--bordeaux);
-    text-align: center; letter-spacing: 0.1em; text-transform: uppercase;
-    margin-bottom: 0.4rem;
+    font-family: "Abril Fatface", Georgia, serif;
+    font-weight: 400; font-size: 1.55rem; color: var(--bordeaux);
+    text-align: center; letter-spacing: 0.08em; text-transform: uppercase;
   }
+  .h2-filet {
+    display: flex; align-items: center; justify-content: center; gap: 0.7rem;
+    margin: 0.6rem auto 0.5rem;
+  }
+  .h2-filet::before, .h2-filet::after { content: ""; width: 44px; height: 2px; background: var(--moutarde); border-radius: 2px; }
+  .h2-filet .point { width: 8px; height: 8px; border-radius: 50%; background: var(--bordeaux); }
   .section-note {
-    text-align: center; font-size: 0.85rem; font-style: italic;
-    color: #998b74; margin-bottom: 1.6rem;
+    text-align: center; font-size: 0.9rem; font-style: italic;
+    color: var(--gris); margin-bottom: 1.8rem;
   }
 
   .ardoise {
     background: #fff;
     border: 2px solid var(--brun);
-    border-radius: 6px;
-    box-shadow: 5px 5px 0 var(--moutarde);
-    padding: 1.8rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 6px 6px 0 var(--moutarde);
+    padding: 1.2rem 1.8rem;
+    transition: transform 0.25s, box-shadow 0.25s;
   }
+  .ardoise:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--moutarde); }
   .ligne-prix {
-    display: flex; align-items: baseline; gap: 0.6rem;
-    padding: 0.55rem 0; flex-wrap: wrap;
+    display: flex; align-items: baseline; gap: 0.7rem;
+    padding: 0.85rem 0; flex-wrap: wrap;
+    border-bottom: 1px dashed var(--ligne);
   }
-  .ligne-prix .nom { font-weight: 700; }
-  .ligne-prix .detail { color: #998b74; font-size: 0.85rem; }
+  .ligne-prix:last-child { border-bottom: none; }
+  .ligne-prix .nom { font-weight: 600; font-size: 1.04rem; }
+  .ligne-prix .detail { color: var(--gris); font-size: 0.86rem; font-style: italic; }
   .ligne-prix .points { flex: 1; border-bottom: 2px dotted #cbb894; transform: translateY(-4px); min-width: 2rem; }
   .ligne-prix .prix {
-    font-family: Georgia, "Times New Roman", serif; font-weight: 700;
-    font-size: 1.08rem; color: var(--bordeaux); white-space: nowrap;
+    font-family: "Abril Fatface", Georgia, serif;
+    font-size: 1.25rem; color: var(--bordeaux); white-space: nowrap;
+  }
+  .ligne-prix .tag {
+    font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600;
+    color: #fff; background: var(--bordeaux);
+    padding: 0.2rem 0.6rem; border-radius: 4px; white-space: nowrap;
   }
 
   .note-carte {
-    text-align: center; font-size: 0.85rem; font-style: italic; color: #998b74;
-    border-top: 2px dashed var(--ligne); padding-top: 1.6rem; margin-top: 1rem;
+    text-align: center; font-size: 0.92rem; font-style: italic; color: var(--gris);
+    max-width: 34rem; margin: 0 auto;
+  }
+  .note-carte::before {
+    content: ""; display: block; width: 56px; height: 3px; border-radius: 2px;
+    background: var(--moutarde); margin: 0 auto 1.4rem;
   }
 
+  /* ---------- Infos pratiques ---------- */
+  .infos {
+    margin-top: 3.2rem;
+    background:
+      radial-gradient(ellipse at 50% -30%, rgba(217,164,65,0.22) 0%, transparent 60%),
+      linear-gradient(165deg, var(--vinyle) 0%, var(--vinyle-fonce) 100%);
+    color: var(--creme);
+    border-radius: 10px;
+    padding: 2.4rem 2rem;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem;
+    box-shadow: 0 20px 45px rgba(46,33,24,0.3);
+    border-top: 5px solid var(--moutarde);
+  }
+  .infos .info { text-align: center; }
+  .infos .info-titre {
+    font-size: 0.64rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--moutarde-clair); margin-bottom: 0.6rem; font-weight: 600;
+  }
+  .infos .info-texte { font-size: 0.92rem; line-height: 1.7; color: #ece0ca; }
+  .infos .info-texte em { color: #c4b49a; }
+
   .mention-reconstitution {
-    max-width: 720px; margin: 0 auto; padding: 0 1.5rem 2rem;
-    text-align: center; font-size: 0.72rem; color: #b0a48e; letter-spacing: 0.04em;
+    max-width: 780px; margin: 0 auto; padding: 0 1.5rem 2.2rem;
+    text-align: center; font-size: 0.74rem; color: #b0a48e; letter-spacing: 0.04em;
   }
 
   /* ---------- Footer CTA ---------- */
   .cta {
-    background: var(--vinyle); color: var(--creme);
-    text-align: center; padding: 3rem 1.5rem;
-    border-top: 5px solid var(--moutarde);
+    background:
+      radial-gradient(ellipse at 50% -20%, rgba(217,164,65,0.2) 0%, transparent 60%),
+      linear-gradient(180deg, var(--vinyle) 0%, var(--vinyle-fonce) 100%);
+    color: var(--creme);
+    text-align: center; padding: 3.6rem 1.5rem 3.2rem;
+    border-top: 6px solid var(--moutarde);
   }
+  .cta .sur-cta { font-size: 0.66rem; letter-spacing: 0.34em; text-transform: uppercase; color: var(--moutarde-clair); margin-bottom: 1rem; font-weight: 600; }
   .cta h3 {
-    font-family: Georgia, "Times New Roman", serif; font-weight: 700;
-    font-size: 1.4rem; margin-bottom: 0.8rem;
+    font-family: "Abril Fatface", Georgia, serif; font-weight: 400;
+    font-size: clamp(1.5rem, 4vw, 1.9rem); margin-bottom: 0.9rem;
   }
-  .cta .offre { font-size: 1rem; margin-bottom: 1.6rem; color: #ddcfb6; }
-  .cta .offre strong { color: var(--moutarde); }
-  .cta .contact { font-size: 0.9rem; line-height: 1.9; color: #c4b49a; }
-  .cta .contact a { color: #fff; text-decoration: none; border-bottom: 1px solid var(--moutarde); }
-  .cta .contact .nom { font-size: 1rem; color: #fff; letter-spacing: 0.08em; font-weight: 700; }
+  .cta .offre { font-size: 1rem; margin-bottom: 0.4rem; color: #ddcfb6; }
+  .cta .offre strong { color: #fff; }
+  .cta .prix-cta {
+    font-family: "Abril Fatface", Georgia, serif;
+    font-size: 2.6rem; color: var(--moutarde);
+    margin: 1rem 0 1.7rem; line-height: 1;
+  }
+  .cta .prix-cta small { display: block; font-family: "Jost", sans-serif; font-size: 0.72rem; letter-spacing: 0.26em; text-transform: uppercase; color: #c4b49a; margin-top: 0.5rem; font-weight: 400; }
+  .cta .contact { font-size: 0.92rem; line-height: 2; color: #c4b49a; }
+  .cta .contact a { color: #fff; text-decoration: none; border-bottom: 1px solid var(--moutarde); transition: color 0.2s; }
+  .cta .contact a:hover { color: var(--moutarde-clair); }
+  .cta .contact .nom { font-size: 1.02rem; color: #fff; letter-spacing: 0.1em; font-weight: 600; }
 
-  @media (max-width: 480px) {
-    .carte { padding: 2.2rem 1.1rem 2rem; }
-    .ardoise { padding: 1.3rem 1rem; box-shadow: 3px 3px 0 var(--moutarde); }
-    .ligne-prix .detail { display: block; }
+  @media (max-width: 600px) {
+    .infos { grid-template-columns: 1fr; gap: 1.3rem; padding: 2rem 1.4rem; }
+    .hero { padding: 2.4rem 1.3rem 2.3rem; box-shadow: 5px 5px 0 var(--moutarde); }
+    .ardoise { padding: 0.8rem 1.2rem; box-shadow: 4px 4px 0 var(--moutarde); }
+    .ligne-prix .detail { display: block; width: 100%; }
   }
 </style>
 </head>
@@ -205,16 +305,22 @@
 
 <div class="carte">
 
-  <header>
+  <header class="hero">
     <div class="vinyle" aria-hidden="true"></div>
     <p class="sur-titre">Bar-brasserie de quartier</p>
     <h1 class="titre">Le Chantilly</h1>
-    <p class="sous-titre">Thierry et Valérie vous accueillent — cuisine maison, ambiance vinyles et guitares</p>
-    <p class="coordonnees">58 avenue de la Morlière, 44700 Orvault</p>
+    <div class="ornement" aria-hidden="true"><span class="note-musique">&#9834;</span></div>
+    <p class="sous-titre">Thierry et Valérie vous accueillent — cuisine maison généreuse, ambiance vinyles et guitares, comme à la maison.</p>
+    <p class="badges">
+      <span class="badge plein">Cuisine maison</span>
+      <span class="badge">Ambiance vinyles</span>
+      <span class="badge">Brasserie de quartier</span>
+    </p>
   </header>
 
   <section>
     <h2>Les formules</h2>
+    <div class="h2-filet" aria-hidden="true"><span class="point"></span></div>
     <p class="section-note">Exemples de l'ardoise</p>
     <div class="ardoise">
       <div class="ligne-prix">
@@ -224,6 +330,7 @@
       </div>
       <div class="ligne-prix">
         <span class="nom">Grande formule</span>
+        <span class="tag">Gros appétits</span>
         <span class="points"></span>
         <span class="prix">18,50&nbsp;€</span>
       </div>
@@ -237,6 +344,7 @@
 
   <section>
     <h2>À l'ardoise</h2>
+    <div class="h2-filet" aria-hidden="true"><span class="point"></span></div>
     <p class="section-note">Exemples de l'ardoise — cuisine maison</p>
     <div class="ardoise">
       <div class="ligne-prix">
@@ -257,6 +365,7 @@
       </div>
       <div class="ligne-prix">
         <span class="nom">Dessert maison</span>
+        <span class="detail">— la douceur du jour</span>
         <span class="points"></span>
         <span class="prix">4,00&nbsp;€</span>
       </div>
@@ -267,15 +376,33 @@
     Prix relevés sur l'ardoise 2024–2025 — à revalider avec Thierry et Valérie.
   </p>
 
+  <aside class="infos">
+    <div class="info">
+      <p class="info-titre">Adresse</p>
+      <p class="info-texte">58 avenue de la Morlière<br>44700 Orvault</p>
+    </div>
+    <div class="info">
+      <p class="info-titre">Service</p>
+      <p class="info-texte">Cuisine maison<br><em>selon l'ardoise du jour</em></p>
+    </div>
+    <div class="info">
+      <p class="info-titre">Allergènes</p>
+      <p class="info-texte">Liste disponible<br><em>sur demande au comptoir</em></p>
+    </div>
+  </aside>
+
 </div>
 
 <p class="mention-reconstitution">
-  Carte reconstituée à partir d'informations publiques — chaque plat, prix et allergène sera validé par le restaurateur avant diffusion.
+  Carte reconstituée à partir d'informations publiques — à valider par le restaurateur&nbsp;:
+  chaque plat, prix et allergène sera confirmé avant toute diffusion.
 </p>
 
 <footer class="cta">
-  <h3>Cette démo vous plaît&nbsp;?</h3>
-  <p class="offre">Version finalisée (print + mobile + QR code)&nbsp;: <strong>300&nbsp;€ une fois, sans abonnement</strong>.</p>
+  <p class="sur-cta">Cette démo vous plaît&nbsp;?</p>
+  <h3>Une carte qui swingue comme vos vinyles</h3>
+  <p class="offre">Version finalisée <strong>(print + mobile + QR code)</strong></p>
+  <p class="prix-cta">300&nbsp;€<small>une fois &middot; sans abonnement</small></p>
   <p class="contact">
     <span class="nom">Arnaud ACHE — Mathurin ACHE ARNAUD</span><br>
     <a href="mailto:mathurin.ache@maaihub.com">mathurin.ache@maaihub.com</a><br>
