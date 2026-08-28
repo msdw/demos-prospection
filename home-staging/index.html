@@ -466,5 +466,23 @@
   });
 </script>
 
+<script>
+  // --- Suivi de visite (beacon silencieux, non bloquant) ---
+  // Laisser ENDPOINT vide tant qu'aucun backend de comptage n'est déployé.
+  (function () {
+    var ENDPOINT = ""; // ex : "https://visites-demos.<sous-domaine>.workers.dev"
+    var PAGE_SLUG = "home-staging";
+    var IP_EXCLUE = "162.120.187.3";
+    if (!ENDPOINT) return;
+    var envoyer = function () {
+      fetch(ENDPOINT + "/track?slug=" + encodeURIComponent(PAGE_SLUG), { mode: "cors" }).catch(function () {});
+    };
+    fetch("https://api.ipify.org?format=json").then(function (r) { return r.json(); }).then(function (d) {
+      if (d && d.ip === IP_EXCLUE) return;
+      envoyer();
+    }).catch(function () { envoyer(); });
+  })();
+</script>
+
 </body>
 </html>

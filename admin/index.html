@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin — Suivi campagne démos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--accent:#1d4ed8;--accent2:#fbbf24;--dark:#0b1e4b;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#1f2937;background:#f6f7fb;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2{font-family:"Fraunces",Georgia,serif}
+
+/* --- Ecran de verrouillage --- */
+#lock{position:fixed;inset:0;z-index:100;background:radial-gradient(1200px 600px at 20% -10%,var(--accent) 0%,transparent 55%),linear-gradient(160deg,var(--dark),#0b1220);display:flex;align-items:center;justify-content:center;padding:1.5rem}
+#lock .card{background:#fff;border-radius:24px;padding:2.4rem 2rem;max-width:400px;width:100%;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+#lock .logo{font-size:2.4rem;margin-bottom:.6rem}
+#lock h1{font-size:1.3rem;color:var(--dark);margin-bottom:.4rem}
+#lock p{font-size:.88rem;color:#6b7280;margin-bottom:1.3rem}
+#code{width:100%;padding:.95rem;font-size:1.1rem;text-align:center;letter-spacing:.14em;border:2px solid #e5e7eb;border-radius:14px;font-weight:600}
+#code:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px rgba(29,78,216,.12)}
+#unlock{width:100%;margin-top:.9rem;padding:1rem;font-size:1.02rem;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--accent),var(--dark));border:none;border-radius:14px;cursor:pointer}
+#err{display:none;color:#dc2626;font-size:.85rem;margin-top:.7rem}
+
+/* --- Layout --- */
+.wrap{max-width:1180px;margin:0 auto;padding:0 1.25rem}
+header.top{background:linear-gradient(155deg,var(--dark) 10%,var(--accent) 125%);color:#fff;padding:2.6rem 0 5.4rem}
+header.top h1{font-size:clamp(1.5rem,4vw,2.1rem);margin-bottom:.2rem}
+header.top p{opacity:.85;font-size:.92rem}
+main{margin-top:-3.4rem;padding-bottom:4rem}
+
+/* --- Synthèse --- */
+.synthese{display:grid;gap:1rem;grid-template-columns:repeat(2,1fr)}
+@media(min-width:760px){.synthese{grid-template-columns:repeat(4,1fr)}}
+.kpi{background:#fff;border:1px solid #eef0f5;border-radius:20px;padding:1.2rem 1rem;text-align:center;box-shadow:0 10px 26px rgba(15,23,42,.08)}
+.kpi .n{font-size:1.8rem;font-weight:800;color:var(--dark)}
+.kpi .l{font-size:.8rem;color:#6b7280;margin-top:.15rem}
+
+/* --- Panneaux --- */
+.panel{background:#fff;border:1px solid #eef0f5;border-radius:22px;padding:1.5rem;margin-top:1.4rem;box-shadow:0 10px 26px rgba(15,23,42,.06)}
+.panel h2{font-size:1.25rem;color:var(--dark);margin-bottom:1rem}
+
+/* --- Barre d'outils --- */
+.toolbar{display:flex;flex-wrap:wrap;gap:.7rem;align-items:center;margin-bottom:1.1rem}
+.toolbar select,.toolbar input[type=file]{padding:.55rem .7rem;border:2px solid #e5e7eb;border-radius:12px;font:inherit;font-size:.88rem;background:#fff}
+.toolbar select:focus{outline:none;border-color:var(--accent)}
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1rem;border-radius:12px;border:none;font:inherit;font-size:.86rem;font-weight:700;cursor:pointer;text-decoration:none}
+.btn-pri{background:linear-gradient(135deg,var(--accent),var(--dark));color:#fff}
+.btn-sec{background:#eef2ff;color:var(--dark);border:1px solid #dbe3ff}
+.btn-danger{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
+
+/* --- Table --- */
+.table-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:980px}
+th{font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;color:#6b7280;text-align:left;padding:.6rem .6rem;border-bottom:2px solid #eef0f5;white-space:nowrap}
+td{padding:.6rem;font-size:.88rem;border-bottom:1px solid #f1f3f8;vertical-align:middle}
+tr:hover td{background:#fafbff}
+td .nom{font-weight:700;color:var(--dark)}
+td .url a{color:var(--accent);text-decoration:none;font-size:.8rem;word-break:break-all}
+td .url a:hover{text-decoration:underline}
+.badge{display:inline-block;font-size:.72rem;font-weight:700;border-radius:999px;padding:.22rem .7rem;white-space:nowrap}
+.b-Menu{background:#ede9fe;color:#5b21b6}
+.b-Artisan{background:#e0f2fe;color:#075985}
+.b-Home-staging{background:#fef3c7;color:#92400e}
+.b-Réactivation{background:#dcfce7;color:#166534}
+select.statut{font:inherit;font-size:.82rem;font-weight:600;padding:.4rem .5rem;border-radius:10px;border:2px solid #e5e7eb;background:#fff;cursor:pointer;max-width:150px}
+select.statut:focus{outline:none;border-color:var(--accent)}
+.st-À-écrire{background:#f3f4f6}
+.st-Mail-rédigé{background:#e0e7ff}
+.st-Mail-envoyé{background:#dbeafe}
+.st-Relance{background:#fef9c3}
+.st-Réponse-reçue{background:#d1fae5}
+.st-Visite-page{background:#ccfbf1}
+.st-Rendez-vous{background:#fde68a}
+.st-Signé{background:#bbf7d0;border-color:#22c55e}
+.st-Refus{background:#fee2e2}
+textarea.note{width:100%;min-width:170px;min-height:44px;font:inherit;font-size:.8rem;padding:.45rem .55rem;border:2px solid #eef0f5;border-radius:10px;resize:vertical;background:#fbfbfe}
+textarea.note:focus{outline:none;border-color:var(--accent);background:#fff}
+.visites{font-weight:800;color:var(--dark);text-align:center}
+.derniere{font-size:.8rem;color:#374151;white-space:nowrap}
+.jamais{color:#9ca3af;font-style:italic}
+.code-acc{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.78rem;background:#f3f4f6;border-radius:8px;padding:.25rem .5rem;white-space:nowrap}
+.telc{font-size:.82rem;white-space:nowrap}
+.telc a{color:inherit;text-decoration:none}
+
+/* --- Stats --- */
+.stats-grid{display:grid;gap:1rem}
+@media(min-width:820px){.stats-grid{grid-template-columns:1fr 1fr}}
+.compteurs{border-collapse:collapse;width:100%;min-width:0}
+.compteurs td,.compteurs th{padding:.45rem .5rem;font-size:.85rem}
+.journal{list-style:none;max-height:340px;overflow-y:auto}
+.journal li{display:flex;justify-content:space-between;gap:.8rem;padding:.5rem .2rem;border-bottom:1px solid #f1f3f8;font-size:.84rem}
+.journal .jslug{font-weight:600;color:var(--dark);word-break:break-all}
+.journal .jdate{color:#6b7280;white-space:nowrap}
+.alerte{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:14px;padding:.9rem 1.1rem;font-size:.88rem;margin-bottom:1rem}
+.mut{color:#9ca3af;font-size:.8rem}
+footer.fin{text-align:center;color:#9ca3af;font-size:.8rem;padding:2rem 0 1rem}
+</style>
+</head>
+<body>
+
+<div id="lock">
+  <div class="card">
+    <div class="logo">🔐</div>
+    <h1>Administration — campagne démos</h1>
+    <p>Page privée de suivi.<br>Saisissez le code d'accès.</p>
+    <input id="code" type="password" autocomplete="off" placeholder="CODE D'ACCÈS" aria-label="Code d'accès">
+    <button id="unlock">Déverrouiller</button>
+    <p id="err">Code incorrect.</p>
+  </div>
+</div>
+
+<div id="app" hidden>
+<header class="top">
+  <div class="wrap">
+    <h1>Suivi de campagne — démos prospection</h1>
+    <p>23 pages · statuts sauvegardés localement · statistiques de visite en direct</p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="synthese" id="synthese"></div>
+
+  <section class="panel">
+    <h2>Tableau de campagne</h2>
+    <div class="toolbar">
+      <select id="filtre-type" aria-label="Filtrer par type">
+        <option value="">Tous les types</option>
+      </select>
+      <select id="filtre-statut" aria-label="Filtrer par statut">
+        <option value="">Tous les statuts</option>
+      </select>
+      <select id="tri" aria-label="Tri">
+        <option value="nom">Tri : nom</option>
+        <option value="visite-desc">Tri : dernière visite (récente d'abord)</option>
+        <option value="visites-desc">Tri : nb de visites</option>
+      </select>
+      <span style="flex:1"></span>
+      <button class="btn btn-pri" id="btn-export">⬇ Exporter JSON</button>
+      <button class="btn btn-sec" id="btn-import">⬆ Importer JSON</button>
+      <input type="file" id="fichier-import" accept="application/json,.json" hidden>
+      <button class="btn btn-danger" id="btn-reset">Réinitialiser</button>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Cible</th><th>Type</th><th>Statut</th><th>Code</th><th>Téléphone</th>
+            <th>Visites</th><th>Dernière visite</th><th>Notes</th>
+          </tr>
+        </thead>
+        <tbody id="lignes"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Statistiques de visite</h2>
+    <div class="toolbar">
+      <button class="btn btn-pri" id="btn-refresh">↻ Rafraîchir</button>
+      <span class="mut" id="stats-info"></span>
+    </div>
+    <div id="stats-alerte" class="alerte" hidden></div>
+    <div class="stats-grid">
+      <div>
+        <h3 style="font-size:.95rem;color:var(--dark);margin-bottom:.5rem">Compteurs par page</h3>
+        <table class="compteurs"><tbody id="stats-compteurs"></tbody></table>
+      </div>
+      <div>
+        <h3 style="font-size:.95rem;color:var(--dark);margin-bottom:.5rem">20 dernières visites</h3>
+        <ul class="journal" id="stats-journal"></ul>
+      </div>
+    </div>
+  </section>
+
+  <footer class="fin">Page privée — non référencée, non liée. Données de suivi stockées dans ce navigateur (localStorage).</footer>
+</main>
+</div>
+
+<script src="data.js"></script>
+<script id="app-logic">
+// ================= CONFIG =================
+// Endpoint du backend de comptage. Vide = statistiques indisponibles
+// (le beacon des pages reste inerte tant qu'aucun endpoint n'existe).
+var ENDPOINT = ""; // ex : "https://visites-demos.<sous-domaine>.workers.dev"
+
+// Hash SHA-256 du code d'accès (le code n'est jamais stocké en clair).
+var HASH_ADMIN = "6ff8d5375d80db541037a3628a872c0968993fb47a03b3ef522be11998604ef1";
+
+var STATUTS = ["À écrire","Mail rédigé","Mail envoyé","Relance","Réponse reçue","Visite page","Rendez-vous","Signé","Refus"];
+var CLE_STOCKAGE = "admin-demos-etat-v1";
+
+// ================= LOGIQUE PURE (testable en Node) =================
+
+function normaliserCode(saisie) {
+  return String(saisie || "").toUpperCase().replace(/\s+/g, "");
+}
+
+// Etat par défaut : chaque cible a un statut et une note.
+function etatInitial() {
+  var e = {};
+  CIBLES.forEach(function (c) { e[c.slug] = { statut: "À écrire", note: "" }; });
+  return e;
+}
+
+function etatValide(obj) {
+  if (!obj || typeof obj !== "object") return false;
+  var ok = false;
+  Object.keys(obj).forEach(function (slug) {
+    var v = obj[slug];
+    if (v && typeof v === "object" &&
+        (typeof v.statut === "undefined" || STATUTS.indexOf(v.statut) !== -1) &&
+        (typeof v.note === "undefined" || typeof v.note === "string")) ok = true;
+  });
+  return ok;
+}
+
+function chargerEtat(storage) {
+  try {
+    var brut = storage.getItem(CLE_STOCKAGE);
+    if (!brut) return etatInitial();
+    var data = JSON.parse(brut);
+    if (!etatValide(data)) return etatInitial();
+    var e = etatInitial();
+    Object.keys(data).forEach(function (slug) {
+      if (e[slug]) {
+        if (data[slug].statut) e[slug].statut = data[slug].statut;
+        if (typeof data[slug].note === "string") e[slug].note = data[slug].note;
+      }
+    });
+    return e;
+  } catch (err) { return etatInitial(); }
+}
+
+function sauvegarderEtat(storage, etat) {
+  storage.setItem(CLE_STOCKAGE, JSON.stringify(etat));
+}
+
+function exporterEtat(etat) {
+  return JSON.stringify({ version: 1, exporteLe: new Date().toISOString(), etats: etat }, null, 2);
+}
+
+// Retourne l'état importé (fusionné) ou null si le fichier est invalide.
+function importerEtat(texte, etatCourant) {
+  try {
+    var data = JSON.parse(texte);
+    var entrant = data && data.etats ? data.etats : data;
+    if (!etatValide(entrant)) return null;
+    var e = etatCourant || etatInitial();
+    Object.keys(entrant).forEach(function (slug) {
+      if (e[slug]) {
+        if (entrant[slug].statut && STATUTS.indexOf(entrant[slug].statut) !== -1) e[slug].statut = entrant[slug].statut;
+        if (typeof entrant[slug].note === "string") e[slug].note = entrant[slug].note;
+      }
+    });
+    return e;
+  } catch (err) { return null; }
+}
+
+// Transforme la réponse de GET /stats en { parSlug: {slug:{visites,derniereVisite}}, journal: [...] }
+// Formats acceptés : {compteurs:{slug:n}, journal:[{slug,ts,ua}]} — champs manquants tolérés.
+function appliquerStats(reponse) {
+  var parSlug = {};
+  var compteurs = (reponse && reponse.compteurs) || {};
+  Object.keys(compteurs).forEach(function (slug) {
+    parSlug[slug] = { visites: Number(compteurs[slug]) || 0, derniereVisite: null };
+  });
+  var journal = Array.isArray(reponse && reponse.journal) ? reponse.journal.slice() : [];
+  journal.sort(function (a, b) { return (b.ts || 0) - (a.ts || 0); });
+  journal.forEach(function (v) {
+    if (!v || !v.slug) return;
+    if (!parSlug[v.slug]) parSlug[v.slug] = { visites: 0, derniereVisite: null };
+    if (v.ts && (!parSlug[v.slug].derniereVisite || v.ts > parSlug[v.slug].derniereVisite)) {
+      parSlug[v.slug].derniereVisite = v.ts;
+    }
+  });
+  return { parSlug: parSlug, journal: journal };
+}
+
+// ================= INTERFACE (navigateur uniquement) =================
+if (typeof document !== "undefined" && typeof window !== "undefined") (function () {
+
+  var etat = chargerEtat(window.localStorage);
+  var stats = { parSlug: {}, journal: [] };
+  var statsOK = false;
+
+  async function sha256Hex(texte) {
+    var buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(texte));
+    return Array.from(new Uint8Array(buf)).map(function (b) { return b.toString(16).padStart(2, "0"); }).join("");
+  }
+
+  async function tryUnlock() {
+    var saisie = normaliserCode(document.getElementById("code").value);
+    if (!saisie) return;
+    try {
+      var h = await sha256Hex(saisie);
+      if (h === HASH_ADMIN) {
+        document.getElementById("lock").style.display = "none";
+        document.getElementById("app").hidden = false;
+        demarrer();
+      } else {
+        document.getElementById("err").style.display = "block";
+      }
+    } catch (e) {
+      document.getElementById("err").textContent = "Votre navigateur ne permet pas la vérification ici : ouvrez la page en HTTPS.";
+      document.getElementById("err").style.display = "block";
+    }
+  }
+
+  document.getElementById("unlock").addEventListener("click", tryUnlock);
+  document.getElementById("code").addEventListener("keydown", function (e) { if (e.key === "Enter") tryUnlock(); });
+
+  function classeStatut(s) { return "st-" + s.replace(/\s+/g, "-"); }
+  function classeType(t) { return "b-" + t.replace(/\s+/g, "-"); }
+
+  function fmtDate(ts) {
+    if (!ts) return '<span class="jamais">jamais</span>';
+    var d = new Date(ts);
+    return d.toLocaleDateString("fr-FR") + " " + d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  }
+
+  function sauvegarder() { sauvegarderEtat(window.localStorage, etat); }
+
+  function rendreSynthese() {
+    var envoyes = 0, reponses = 0, visites = 0, signes = 0;
+    CIBLES.forEach(function (c) {
+      var s = etat[c.slug].statut;
+      if (["Mail envoyé","Relance","Réponse reçue","Visite page","Rendez-vous","Signé","Refus"].indexOf(s) !== -1) envoyes++;
+      if (["Réponse reçue","Rendez-vous","Signé"].indexOf(s) !== -1) reponses++;
+      if (s === "Signé") signes++;
+      var st = stats.parSlug[c.slug];
+      if (st && st.visites > 0) visites++;
+      else if (s === "Visite page") visites++;
+    });
+    var kpis = [
+      { n: envoyes, l: "mails envoyés" },
+      { n: reponses, l: "réponses" },
+      { n: visites, l: "pages visitées" },
+      { n: signes, l: "signés" }
+    ];
+    document.getElementById("synthese").innerHTML = kpis.map(function (k) {
+      return '<div class="kpi"><div class="n">' + k.n + '</div><div class="l">' + k.l + '</div></div>';
+    }).join("");
+  }
+
+  function rendreFiltres() {
+    var types = [];
+    CIBLES.forEach(function (c) { if (types.indexOf(c.type) === -1) types.push(c.type); });
+    var ft = document.getElementById("filtre-type");
+    types.forEach(function (t) {
+      var o = document.createElement("option"); o.value = t; o.textContent = t; ft.appendChild(o);
+    });
+    var fs = document.getElementById("filtre-statut");
+    STATUTS.forEach(function (s) {
+      var o = document.createElement("option"); o.value = s; o.textContent = s; fs.appendChild(o);
+    });
+  }
+
+  function rendreTable() {
+    var fType = document.getElementById("filtre-type").value;
+    var fStatut = document.getElementById("filtre-statut").value;
+    var tri = document.getElementById("tri").value;
+
+    var lignes = CIBLES.filter(function (c) {
+      if (fType && c.type !== fType) return false;
+      if (fStatut && etat[c.slug].statut !== fStatut) return false;
+      return true;
+    });
+
+    lignes.sort(function (a, b) {
+      if (tri === "visite-desc") {
+        return (derniereVisite(b) || 0) - (derniereVisite(a) || 0) || a.nom.localeCompare(b.nom);
+      }
+      if (tri === "visites-desc") {
+        return nbVisites(b) - nbVisites(a) || a.nom.localeCompare(b.nom);
+      }
+      return a.nom.localeCompare(b.nom);
+    });
+
+    var html = lignes.map(function (c) {
+      var e = etat[c.slug];
+      var st = stats.parSlug[c.slug];
+      var url = BASE_URL + c.slug + "/";
+      var opts = STATUTS.map(function (s) {
+        return '<option value="' + s + '"' + (s === e.statut ? " selected" : "") + ">" + s + "</option>";
+      }).join("");
+      return "<tr>" +
+        '<td><div class="nom">' + c.nom + '</div><div class="url"><a href="' + url + '" target="_blank" rel="noopener">' + url + "</a></div></td>" +
+        '<td><span class="badge ' + classeType(c.type) + '">' + c.type + "</span></td>" +
+        '<td><select class="statut ' + classeStatut(e.statut) + '" data-slug="' + c.slug + '">' + opts + "</select></td>" +
+        '<td>' + (c.code ? '<span class="code-acc">' + c.code + "</span>" : '<span class="mut">public</span>') + "</td>" +
+        '<td class="telc">' + (c.tel ? '<a href="tel:' + c.tel.replace(/\s+/g, "") + '">' + c.tel + "</a>" : '<span class="mut">—</span>') + "</td>" +
+        '<td class="visites">' + (st ? st.visites : 0) + "</td>" +
+        '<td class="derniere">' + (st ? fmtDate(st.derniereVisite) : '<span class="jamais">jamais</span>') + "</td>" +
+        '<td><textarea class="note" data-slug="' + c.slug + '" placeholder="Note libre…">' + e.note.replace(/</g, "&lt;") + "</textarea></td>" +
+        "</tr>";
+    }).join("");
+
+    document.getElementById("lignes").innerHTML = html;
+
+    document.querySelectorAll("select.statut").forEach(function (sel) {
+      sel.addEventListener("change", function () {
+        etat[sel.getAttribute("data-slug")].statut = sel.value;
+        sel.className = "statut " + classeStatut(sel.value);
+        sauvegarder();
+        rendreSynthese();
+      });
+    });
+    document.querySelectorAll("textarea.note").forEach(function (ta) {
+      ta.addEventListener("input", function () {
+        etat[ta.getAttribute("data-slug")].note = ta.value;
+        sauvegarder();
+      });
+    });
+  }
+
+  function nbVisites(c) { var st = stats.parSlug[c.slug]; return st ? st.visites : 0; }
+  function derniereVisite(c) { var st = stats.parSlug[c.slug]; return st ? st.derniereVisite : null; }
+
+  function rendreStats() {
+    var alerte = document.getElementById("stats-alerte");
+    var info = document.getElementById("stats-info");
+    if (!ENDPOINT) {
+      alerte.hidden = false;
+      alerte.textContent = "Aucun endpoint de statistiques n'est configuré (ENDPOINT vide) : les visites ne sont pas encore collectées. Les compteurs resteront à zéro tant qu'aucun backend n'est déployé.";
+      info.textContent = "";
+    } else if (!statsOK) {
+      alerte.hidden = false;
+      alerte.textContent = "L'endpoint de statistiques ne répond pas pour l'instant. Réessayez avec « Rafraîchir » — le tableau de campagne reste utilisable.";
+      info.textContent = "";
+    } else {
+      alerte.hidden = true;
+      info.textContent = "Dernière actualisation : " + new Date().toLocaleTimeString("fr-FR");
+    }
+
+    var lignesC = CIBLES.map(function (c) {
+      var st = stats.parSlug[c.slug];
+      return "<tr><td>" + c.nom + '</td><td style="text-align:right;font-weight:700">' + (st ? st.visites : 0) + "</td></tr>";
+    }).join("");
+    document.getElementById("stats-compteurs").innerHTML = lignesC;
+
+    var items = stats.journal.slice(0, 20).map(function (v) {
+      return '<li><span class="jslug">' + v.slug + '</span><span class="jdate">' + fmtDate(v.ts) + "</span></li>";
+    }).join("");
+    document.getElementById("stats-journal").innerHTML = items || '<li><span class="mut">Aucune visite enregistrée.</span></li>';
+  }
+
+  async function rafraichirStats() {
+    if (!ENDPOINT) { statsOK = false; rendreStats(); rendreTable(); rendreSynthese(); return; }
+    try {
+      var r = await fetch(ENDPOINT + "/stats", { mode: "cors" });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      stats = appliquerStats(await r.json());
+      statsOK = true;
+    } catch (e) {
+      statsOK = false;
+    }
+    rendreStats();
+    rendreTable();
+    rendreSynthese();
+  }
+
+  function demarrer() {
+    rendreFiltres();
+    rendreSynthese();
+    rendreStats();
+    rendreTable();
+    rafraichirStats();
+
+    ["filtre-type", "filtre-statut", "tri"].forEach(function (id) {
+      document.getElementById(id).addEventListener("change", rendreTable);
+    });
+    document.getElementById("btn-refresh").addEventListener("click", rafraichirStats);
+
+    document.getElementById("btn-export").addEventListener("click", function () {
+      var blob = new Blob([exporterEtat(etat)], { type: "application/json" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "suivi-campagne-demos.json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    document.getElementById("btn-import").addEventListener("click", function () {
+      document.getElementById("fichier-import").click();
+    });
+    document.getElementById("fichier-import").addEventListener("change", function (e) {
+      var f = e.target.files && e.target.files[0];
+      if (!f) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        var importe = importerEtat(reader.result, etat);
+        if (importe) {
+          etat = importe;
+          sauvegarder();
+          rendreTable();
+          rendreSynthese();
+          alert("Import réussi.");
+        } else {
+          alert("Fichier invalide : import annulé.");
+        }
+        e.target.value = "";
+      };
+      reader.readAsText(f);
+    });
+
+    document.getElementById("btn-reset").addEventListener("click", function () {
+      if (!confirm("Réinitialiser tous les statuts et notes ? Cette action est définitive.")) return;
+      etat = etatInitial();
+      sauvegarder();
+      rendreTable();
+      rendreSynthese();
+    });
+  }
+})();
+</script>
+</body>
+</html>

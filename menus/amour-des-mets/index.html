@@ -502,6 +502,22 @@
   var HASH_ATTENDU = "24e152b92ca88441dec83c56c0c3b01a6d63c7188a3346048ce0d91145c62c60";
   var NOM = "DÉMO — L'Amour des mets";
 
+  // --- Suivi de visite (beacon silencieux, non bloquant) ---
+  // Laisser ENDPOINT vide tant qu'aucun backend de comptage n'est déployé.
+  var ENDPOINT = ""; // ex : "https://visites-demos.<sous-domaine>.workers.dev"
+  var PAGE_SLUG = "menus/amour-des-mets";
+  var IP_EXCLUE = "162.120.187.3";
+  function trackVisit() {
+    if (!ENDPOINT) return;
+    var envoyer = function () {
+      fetch(ENDPOINT + "/track?slug=" + encodeURIComponent(PAGE_SLUG), { mode: "cors" }).catch(function () {});
+    };
+    fetch("https://api.ipify.org?format=json").then(function (r) { return r.json(); }).then(function (d) {
+      if (d && d.ip === IP_EXCLUE) return;
+      envoyer();
+    }).catch(function () { envoyer(); });
+  }
+
   // Filigrane répété
   var fg = document.getElementById("filigrane");
   var html = "";
@@ -525,6 +541,7 @@
         document.getElementById("verrou").style.display = "none";
         document.getElementById("contenu").classList.add("visible");
         document.body.style.overflow = "";
+        trackVisit();
       } else {
         erreur.textContent = "Code incorrect. Vérifiez le code communiqué.";
       }

@@ -244,6 +244,24 @@ footer a{color:var(--accent2);text-decoration:none}
 var HASH = "71a9cece76e2314e28e841ddd8538dd7f5cb4aac9bc6785669bf84650915cbdd";
 var WM_TEXT = "DÉMO — AP Electricité";
 
+// --- Suivi de visite (beacon silencieux, non bloquant) ---
+// Laisser ENDPOINT vide tant qu'aucun backend de comptage n'est déployé.
+var ENDPOINT = ""; // ex : "https://visites-demos.<sous-domaine>.workers.dev"
+var PAGE_SLUG = "artisans/ap-electricite";
+var IP_EXCLUE = "162.120.187.3";
+function trackVisit() {
+  if (!ENDPOINT) return;
+  var envoyer = function () {
+    fetch(ENDPOINT + "/track?slug=" + encodeURIComponent(PAGE_SLUG), { mode: "cors" }).catch(function () {});
+  };
+  try {
+    fetch("https://api.ipify.org?format=json")
+      .then(function (r) { return r.json(); })
+      .then(function (d) { if (d && d.ip === IP_EXCLUE) return; envoyer(); })
+      .catch(function () { envoyer(); });
+  } catch (e) {}
+}
+
 // Filigrane répété en diagonale
 (function(){
   var wm = document.getElementById('watermark');
@@ -269,6 +287,7 @@ async function tryUnlock() {
       document.getElementById('lock').style.display = 'none';
       document.getElementById('content').hidden = false;
       document.getElementById('footer').hidden = false;
+      trackVisit();
     } else {
       document.getElementById('err').style.display = 'block';
     }

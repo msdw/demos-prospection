@@ -486,6 +486,22 @@
   var HASH_ATTENDU = "3bf43114b6ca479ba7c0d954ac12294d8367d05525f179dc575bfae15da46b1a";
   var NOM = "DÉMO — Le Chantilly";
 
+  // --- Suivi de visite (beacon silencieux, non bloquant) ---
+  // Laisser ENDPOINT vide tant qu'aucun backend de comptage n'est déployé.
+  var ENDPOINT = ""; // ex : "https://visites-demos.<sous-domaine>.workers.dev"
+  var PAGE_SLUG = "menus/le-chantilly";
+  var IP_EXCLUE = "162.120.187.3";
+  function trackVisit() {
+    if (!ENDPOINT) return;
+    var envoyer = function () {
+      fetch(ENDPOINT + "/track?slug=" + encodeURIComponent(PAGE_SLUG), { mode: "cors" }).catch(function () {});
+    };
+    fetch("https://api.ipify.org?format=json").then(function (r) { return r.json(); }).then(function (d) {
+      if (d && d.ip === IP_EXCLUE) return;
+      envoyer();
+    }).catch(function () { envoyer(); });
+  }
+
   var fg = document.getElementById("filigrane");
   var html = "";
   for (var i = 0; i < 120; i++) html += "<span>" + NOM + "</span>";
@@ -508,6 +524,7 @@
         document.getElementById("verrou").style.display = "none";
         document.getElementById("contenu").classList.add("visible");
         document.body.style.overflow = "";
+        trackVisit();
       } else {
         erreur.textContent = "Code incorrect. Vérifiez le code communiqué.";
       }
