@@ -202,6 +202,30 @@
     border: 1.5px solid var(--ligne); border-radius: 8px;
     padding: 0.15rem 0.55rem; color: var(--gris);
   }
+  .allergenes { font-size: 0.74rem; color: var(--gris); margin-top: 0.15rem; }
+  .allergene {
+    display: inline-block; border: 1.5px solid var(--ligne); border-radius: 999px;
+    padding: 0.1rem 0.6rem; margin: 0.18rem 0.15rem 0 0;
+    font-size: 0.66rem; font-weight: 600; color: var(--gris); background: var(--sable);
+  }
+  .legende-allergenes { font-size: 0.76rem; font-style: italic; color: var(--gris); margin-top: 1rem; }
+
+  /* ---------- Photos d'illustration ---------- */
+  .photos { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .photo-fig { margin: 0; }
+  .photo-fig img {
+    width: 100%; display: block; aspect-ratio: 3 / 2; object-fit: cover;
+    border-radius: 16px; border: 1px solid var(--ligne);
+    box-shadow: 0 14px 32px rgba(29,26,23,0.14);
+  }
+  .photo-fig figcaption {
+    margin-top: 0.55rem; text-align: center;
+    font-size: 0.78rem; font-style: italic; color: var(--gris);
+  }
+  .note-photos {
+    text-align: center; font-size: 0.74rem; color: #b0a592;
+    margin-top: 1.1rem; letter-spacing: 0.03em;
+  }
 
   .note-carte {
     text-align: center; font-size: 0.9rem; font-style: italic; color: var(--gris);
@@ -262,6 +286,7 @@
 
   @media (max-width: 600px) {
     .grille { grid-template-columns: 1fr; }
+    .photos { grid-template-columns: 1fr; }
     .infos { grid-template-columns: 1fr; gap: 1.3rem; padding: 2rem 1.4rem; }
     .hero { padding: 2.4rem 1.3rem 2.6rem; }
   }
@@ -312,8 +337,12 @@
           <span class="prix">12,50&nbsp;€ – 13,00&nbsp;€</span>
         </div>
         <p class="detail">Formules menu, selon carte en ligne</p>
+        <p class="allergenes">Allergènes (estimés)&nbsp;:
+          <span class="allergene">Gluten</span><span class="allergene">Lactose</span><span class="allergene">Œufs</span><span class="allergene">Moutarde</span><span class="allergene">Sésame</span>
+        </p>
       </div>
     </div>
+    <p class="legende-allergenes">Allergènes estimés — liste définitive à valider avec le restaurant</p>
   </section>
 
   <section>
@@ -328,8 +357,12 @@
           <span class="prix">11,50&nbsp;€</span>
         </div>
         <p class="detail">Le plus commandé de la carte en ligne</p>
+        <p class="allergenes">Allergènes (estimés)&nbsp;:
+          <span class="allergene">Gluten</span><span class="allergene">Lactose</span><span class="allergene">Œufs</span><span class="allergene">Moutarde</span><span class="allergene">Sésame</span>
+        </p>
       </div>
     </div>
+    <p class="legende-allergenes">Allergènes estimés — liste définitive à valider avec le restaurant</p>
   </section>
 
   <section>
@@ -344,6 +377,9 @@
         </div>
         <div class="tailles"><span>M</span><span>L</span><span>XL</span></div>
         <p class="detail">Trois tailles au choix — prix selon la taille, voir carte en ligne</p>
+        <p class="allergenes">Allergènes (estimés)&nbsp;:
+          <span class="allergene">Gluten</span><span class="allergene">Lactose</span><span class="allergene">Moutarde</span>
+        </p>
       </div>
       <div class="item">
         <div class="item-haut">
@@ -354,6 +390,7 @@
         <p class="detail">Pour accompagner chaque menu</p>
       </div>
     </div>
+    <p class="legende-allergenes">Allergènes estimés — liste définitive à valider avec le restaurant</p>
   </section>
 
   <section>
@@ -367,6 +404,9 @@
           <span class="prix">sur place</span>
         </div>
         <p class="detail">Servis sur place — prix affichés au restaurant</p>
+        <p class="allergenes">Allergènes (estimés)&nbsp;:
+          <span class="allergene">Céleri</span>
+        </p>
       </div>
       <div class="item">
         <div class="item-haut">
@@ -375,8 +415,28 @@
           <span class="prix">sur place</span>
         </div>
         <p class="detail">Servi sur place — prix affiché au restaurant</p>
+        <p class="allergenes">Allergènes (estimés)&nbsp;:
+          <span class="allergene">Gluten</span><span class="allergene">Céleri</span>
+        </p>
       </div>
     </div>
+    <p class="legende-allergenes">Allergènes estimés — liste définitive à valider avec le restaurant</p>
+  </section>
+
+  <section>
+    <h2>En images</h2>
+    <p class="section-note">De quoi donner faim — le tacos et le kebab best-seller</p>
+    <div class="photos">
+      <figure class="photo-fig">
+        <img src="photo-1.png" alt="Tacos français généreux, sauce fromagère fondante et frites dorées" loading="lazy">
+        <figcaption>Tacos sauce fromagère, frites</figcaption>
+      </figure>
+      <figure class="photo-fig">
+        <img src="photo-2.png" alt="Sandwich kebab au pain naan, crudités, sauce blanche et frites" loading="lazy">
+        <figcaption>Sandwich kebab, crudités, sauce blanche</figcaption>
+      </figure>
+    </div>
+    <p class="note-photos">Photo d'illustration générée par IA — les photos des vrais plats remplaceront celles-ci</p>
   </section>
 
   <p class="note-carte">
@@ -411,7 +471,7 @@
   <p class="offre">Version finalisée <strong>(print + mobile + QR code)</strong></p>
   <p class="prix-cta">300&nbsp;€<small>une fois &middot; sans abonnement</small></p>
   <p class="contact">
-    <span class="nom">Arnaud ACHE — Mathurin ACHE ARNAUD</span><br>
+    <span class="nom">Mathurin ACHE ARNAUD — Mathurin ACHE ARNAUD</span><br>
     <a href="mailto:mathurin.ache@maaihub.com">mathurin.ache@maaihub.com</a><br>
     <a href="tel:+33683959720">06.83.95.97.20</a>
   </p>

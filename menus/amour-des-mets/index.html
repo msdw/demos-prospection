@@ -235,6 +235,33 @@
   .plat .points { flex: 1; border-bottom: 1px dotted #cfc5b0; transform: translateY(-4px); min-width: 2rem; }
   .plat .marque { font-size: 0.66rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--bois); white-space: nowrap; font-weight: 500; }
   .plat-desc { font-size: 0.92rem; color: var(--gris); font-style: italic; margin-top: 0.3rem; }
+  .allergenes { font-size: 0.74rem; color: var(--gris); margin-top: 0.5rem; letter-spacing: 0.02em; }
+  .allergene {
+    display: inline-block; border: 1px solid var(--ligne); border-radius: 999px;
+    padding: 0.08rem 0.6rem; margin: 0.18rem 0.15rem 0 0;
+    font-size: 0.68rem; color: var(--gris); background: var(--creme); letter-spacing: 0.04em;
+  }
+  .legende-allergenes {
+    text-align: center; font-size: 0.76rem; font-style: italic;
+    color: var(--gris); margin-top: 1.2rem;
+  }
+
+  /* ---------- Photos d'illustration ---------- */
+  .photos { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .photo-fig { margin: 0; }
+  .photo-fig img {
+    width: 100%; display: block; aspect-ratio: 3 / 2; object-fit: cover;
+    border-radius: 6px; border: 1px solid var(--ligne);
+    box-shadow: 0 14px 34px rgba(39,67,95,0.12);
+  }
+  .photo-fig figcaption {
+    margin-top: 0.55rem; text-align: center;
+    font-size: 0.78rem; font-style: italic; color: var(--gris);
+  }
+  .note-photos {
+    text-align: center; font-size: 0.74rem; color: #a39c8d;
+    margin-top: 1.1rem; letter-spacing: 0.03em;
+  }
 
   .note-carte {
     text-align: center; font-size: 0.92rem; font-style: italic; color: var(--gris);
@@ -297,6 +324,7 @@
 
   @media (max-width: 640px) {
     .grille-formules { grid-template-columns: 1fr; }
+    .photos { grid-template-columns: 1fr; }
     .infos { grid-template-columns: 1fr; gap: 1.3rem; padding: 2rem 1.4rem; }
     .hero { padding: 2.4rem 1.3rem 2.2rem; }
     .plats { padding: 0.4rem 1.2rem; }
@@ -384,6 +412,9 @@
           <span class="marque">De la mer</span>
         </div>
         <p class="plat-desc">Avocat rôti au beurre demi-sel, chou-fleur agrume</p>
+        <p class="allergenes">Allergènes (estimés)&nbsp;:
+          <span class="allergene">Mollusques</span><span class="allergene">Lactose</span><span class="allergene">Sulfites</span>
+        </p>
       </div>
 
       <div class="plat">
@@ -393,6 +424,9 @@
           <span class="marque">De la terre</span>
         </div>
         <p class="plat-desc">Ail des ours de la vallée du Cens, jus truffé</p>
+        <p class="allergenes">Allergènes (estimés)&nbsp;:
+          <span class="allergene">Lactose</span><span class="allergene">Céleri</span><span class="allergene">Sulfites</span>
+        </p>
       </div>
 
       <div class="plat">
@@ -402,8 +436,24 @@
           <span class="marque">En douceur</span>
         </div>
         <p class="plat-desc">Sorbet huile d'olive, meringue, pop corn</p>
+        <p class="allergenes">Allergènes (estimés)&nbsp;:
+          <span class="allergene">Œufs</span><span class="allergene">Lactose</span><span class="allergene">Fruits à coque</span>
+        </p>
       </div>
     </div>
+    <p class="legende-allergenes">Allergènes estimés — liste définitive à valider avec le restaurant</p>
+
+    <div class="photos">
+      <figure class="photo-fig">
+        <img src="photo-1.png" alt="Noix de Saint-Jacques rôties, avocat et jus truffé — dressage gastronomique" loading="lazy">
+        <figcaption>Saint-Jacques rôties, avocat, jus truffé</figcaption>
+      </figure>
+      <figure class="photo-fig">
+        <img src="photo-2.png" alt="Quasi de veau rosé, ail des ours et jus truffé — dressage gastronomique" loading="lazy">
+        <figcaption>Quasi de veau, ail des ours, jus truffé</figcaption>
+      </figure>
+    </div>
+    <p class="note-photos">Photo d'illustration générée par IA — les photos des vrais plats remplaceront celles-ci</p>
   </section>
 
   <p class="note-carte">
@@ -439,7 +489,7 @@
   <p class="offre">Version finalisée <strong>(print + mobile + QR code)</strong></p>
   <p class="prix-cta">300&nbsp;€<small>une fois &middot; sans abonnement</small></p>
   <p class="contact">
-    <span class="nom">Arnaud ACHE — Mathurin ACHE ARNAUD</span><br>
+    <span class="nom">Mathurin ACHE ARNAUD — Mathurin ACHE ARNAUD</span><br>
     <a href="mailto:mathurin.ache@maaihub.com">mathurin.ache@maaihub.com</a><br>
     <a href="tel:+33683959720">06.83.95.97.20</a>
   </p>
