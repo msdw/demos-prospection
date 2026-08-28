@@ -117,7 +117,7 @@ footer.fin{text-align:center;color:#9ca3af;font-size:.8rem;padding:2rem 0 1rem}
 <header class="top">
   <div class="wrap">
     <h1>Suivi de campagne — démos prospection</h1>
-    <p>23 pages · statuts sauvegardés localement · statistiques de visite en direct</p>
+    <p>26 cibles · statuts sauvegardés localement · statistiques de visite en direct</p>
   </div>
 </header>
 
@@ -203,7 +203,7 @@ function normaliserCode(saisie) {
 // Etat par défaut : chaque cible a un statut et une note.
 function etatInitial() {
   var e = {};
-  CIBLES.forEach(function (c) { e[c.slug] = { statut: "À écrire", note: "" }; });
+  CIBLES.forEach(function (c) { e[c.slug] = { statut: c.statut0 || "À écrire", note: "" }; });
   return e;
 }
 

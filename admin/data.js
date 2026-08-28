@@ -7,11 +7,11 @@ var CIBLES = [
   { nom: "L'Amour des mets",        type: "Menu",         slug: "menus/amour-des-mets",        code: "AMOUR2026",               tel: "+33 9 83 72 94 00" },
   { nom: "Le Raffiné",              type: "Menu",         slug: "menus/le-raffine",            code: "RAFFINE2026",             tel: "+33 9 87 31 29 30" },
   { nom: "L'Arvigate",              type: "Menu",         slug: "menus/arvigate",              code: "ARVIGATE2026",            tel: "+33 2 40 94 94 94" },
-  { nom: "Le Chantilly",            type: "Menu",         slug: "menus/le-chantilly",          code: "CHANTILLY2026",           tel: "+33 2 40 94 84 11" },
+  { nom: "Le Chantilly",            type: "Menu",         slug: "menus/le-chantilly",          code: "CHANTILLY2026",           tel: "+33 2 40 94 84 11", statut0: "Mail envoyé" },
 
   // --- Artisans ---
   { nom: "AP Electricité",          type: "Artisan",      slug: "artisans/ap-electricite",     code: "APELECTRICITE26",         tel: "+33 6 75 65 07 91" },
-  { nom: "K Thermique & Sanitaire", type: "Artisan",      slug: "artisans/k-thermique",        code: "KTHERMIQUE26",            tel: "+33 6 24 52 12 59" },
+  { nom: "K Thermique & Sanitaire", type: "Artisan",      slug: "artisans/k-thermique",        code: "KTHERMIQUE26",            tel: "+33 6 24 52 12 59", statut0: "Mail envoyé" },
   { nom: "Teamelec",                type: "Artisan",      slug: "artisans/teamelec",           code: "TEAMELEC26",              tel: "+33 2 28 01 35 34" },
   { nom: "LPC Plombier Chauffagiste", type: "Artisan",    slug: "artisans/lpc-plombier",       code: "LPCPLOMBIER26",           tel: "+33 6 99 36 84 16" },
   { nom: "RÉNO COULEURS",           type: "Artisan",      slug: "artisans/reno-couleurs",      code: "RENOCOULEURS26",          tel: "+33 7 67 92 39 48" },
@@ -27,6 +27,11 @@ var CIBLES = [
   { nom: "SAS LAIR",                type: "Artisan",      slug: "artisans/sas-lair",           code: "SASLAIR26",               tel: "+33 7 49 39 31 51" },
   { nom: "Plomb'ouest",             type: "Artisan",      slug: "artisans/plomb-ouest",        code: "PLOMBOUEST26",            tel: "+33 6 31 91 44 89" },
   { nom: "Arpec",                   type: "Artisan",      slug: "artisans/arpec",              code: "ARPEC26",                 tel: "+33 6 82 06 48 08" },
+
+  // --- Agences immobilières (home staging, page publique partagée) ---
+  { nom: "Nestenn Orvault (N. Ardouin)", type: "Home staging", slug: "agence-nestenn-orvault", code: "", tel: "+33 2 40 40 18 17", statut0: "Mail envoyé" },
+  { nom: "Nestenn RP de Vannes (S. Vedrenne)", type: "Home staging", slug: "agence-nestenn-rpvannes", code: "", tel: "+33 2 40 46 60 60", statut0: "Mail envoyé" },
+  { nom: "Beauséjour Immobilier Orvault", type: "Home staging", slug: "agence-beausejour-orvault", code: "", tel: "+33 2 40 40 40 19", statut0: "Mail envoyé" },
 
   // --- Pages publiques ---
   { nom: "Home staging virtuel",    type: "Home staging", slug: "home-staging",                code: "",                        tel: "" },
