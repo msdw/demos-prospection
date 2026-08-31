@@ -1,0 +1,11 @@
+name = "demos-prospection-visits"
+main = "src/index.js"
+compatibility_date = "2026-08-31"
+
+[[durable_objects.bindings]]
+name = "VISITS"
+class_name = "Visits"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Visits"]

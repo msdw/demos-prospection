@@ -117,7 +117,7 @@ footer.fin{text-align:center;color:#9ca3af;font-size:.8rem;padding:2rem 0 1rem}
 <header class="top">
   <div class="wrap">
     <h1>Suivi de campagne — démos prospection</h1>
-    <p>26 cibles · statuts sauvegardés localement · statistiques de visite en direct</p>
+    <p id="campaign-meta">Suivi des statuts, événements et visites de vos démos</p>
   </div>
 </header>
 
@@ -150,7 +150,7 @@ footer.fin{text-align:center;color:#9ca3af;font-size:.8rem;padding:2rem 0 1rem}
         <thead>
           <tr>
             <th>Cible</th><th>Type</th><th>Statut</th><th>Code</th><th>Téléphone</th>
-            <th>Visites</th><th>Dernière visite</th><th>Notes</th>
+            <th>Visites</th><th>Dernière visite</th><th>Dernier événement</th><th>Notes</th>
           </tr>
         </thead>
         <tbody id="lignes"></tbody>
@@ -181,12 +181,13 @@ footer.fin{text-align:center;color:#9ca3af;font-size:.8rem;padding:2rem 0 1rem}
 </main>
 </div>
 
+<script src="../assets/visit-config.js"></script>
 <script src="data.js"></script>
 <script id="app-logic">
 // ================= CONFIG =================
 // Endpoint du backend de comptage. Vide = statistiques indisponibles
 // (le beacon des pages reste inerte tant qu'aucun endpoint n'existe).
-var ENDPOINT = ""; // ex : "https://visites-demos.<sous-domaine>.workers.dev"
+var ENDPOINT = typeof window !== "undefined" ? (window.DEMO_VISITS_ENDPOINT || "") : "";
 
 // Hash SHA-256 du code d'accès (le code n'est jamais stocké en clair).
 var HASH_ADMIN = "6ff8d5375d80db541037a3628a872c0968993fb47a03b3ef522be11998604ef1";
@@ -281,6 +282,15 @@ function appliquerStats(reponse) {
   return { parSlug: parSlug, journal: journal };
 }
 
+function dernierEvenement(cible, statsParSlug) {
+  var evenement = cible.evenement0 || null;
+  var visite = statsParSlug[cible.slug] && statsParSlug[cible.slug].derniereVisite;
+  if (visite && (!evenement || Number(visite) > new Date(evenement.ts).getTime())) {
+    return { libelle: "Visite de la démo", ts: visite };
+  }
+  return evenement;
+}
+
 // ================= INTERFACE (navigateur uniquement) =================
 if (typeof document !== "undefined" && typeof window !== "undefined") (function () {
 
@@ -321,6 +331,11 @@ if (typeof document !== "undefined" && typeof window !== "undefined") (function 
     if (!ts) return '<span class="jamais">jamais</span>';
     var d = new Date(ts);
     return d.toLocaleDateString("fr-FR") + " " + d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  }
+
+  function fmtEvenement(evenement) {
+    if (!evenement) return '<span class="jamais">aucun événement</span>';
+    return '<strong>' + evenement.libelle + '</strong><br><span class="mut">' + fmtDate(evenement.ts) + '</span>';
   }
 
   function sauvegarder() { sauvegarderEtat(window.localStorage, etat); }
@@ -384,7 +399,8 @@ if (typeof document !== "undefined" && typeof window !== "undefined") (function 
     var html = lignes.map(function (c) {
       var e = etat[c.slug];
       var st = stats.parSlug[c.slug];
-      var url = BASE_URL + c.slug + "/";
+      var url = BASE_URL + (c.pageSlug || c.slug) + "/";
+      if (c.pageSlug) url += "?cible=" + encodeURIComponent(c.slug);
       var opts = STATUTS.map(function (s) {
         return '<option value="' + s + '"' + (s === e.statut ? " selected" : "") + ">" + s + "</option>";
       }).join("");
@@ -396,6 +412,7 @@ if (typeof document !== "undefined" && typeof window !== "undefined") (function 
         '<td class="telc">' + (c.tel ? '<a href="tel:' + c.tel.replace(/\s+/g, "") + '">' + c.tel + "</a>" : '<span class="mut">—</span>') + "</td>" +
         '<td class="visites">' + (st ? st.visites : 0) + "</td>" +
         '<td class="derniere">' + (st ? fmtDate(st.derniereVisite) : '<span class="jamais">jamais</span>') + "</td>" +
+        '<td class="derniere">' + fmtEvenement(dernierEvenement(c, stats.parSlug)) + "</td>" +
         '<td><textarea class="note" data-slug="' + c.slug + '" placeholder="Note libre…">' + e.note.replace(/</g, "&lt;") + "</textarea></td>" +
         "</tr>";
     }).join("");
@@ -465,6 +482,7 @@ if (typeof document !== "undefined" && typeof window !== "undefined") (function 
   }
 
   function demarrer() {
+    document.getElementById("campaign-meta").textContent = CIBLES.length + " cibles · statuts sauvegardés localement · événements et visites";
     rendreFiltres();
     rendreSynthese();
     rendreStats();

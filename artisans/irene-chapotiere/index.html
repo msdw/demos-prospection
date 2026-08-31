@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/google-reviews.css">
+<script src="../../assets/visit-config.js"></script>
 <style>
 :root{--accent:#c2410c;--accent2:#fdba74;--dark:#3d1505;}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -227,7 +228,7 @@ var WM_TEXT = "DÉMO — Irène de la Chapotière";
 
 // --- Suivi de visite (beacon silencieux, non bloquant) ---
 // Laisser ENDPOINT vide tant qu'aucun backend de comptage n'est déployé.
-var ENDPOINT = ""; // ex : "https://visites-demos.<sous-domaine>.workers.dev"
+var ENDPOINT = window.DEMO_VISITS_ENDPOINT || "";
 var PAGE_SLUG = "artisans/irene-chapotiere";
 var IP_EXCLUE = "162.120.187.3";
 function trackVisit() {

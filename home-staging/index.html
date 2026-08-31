@@ -236,6 +236,7 @@
     .hero{padding:80px 0 64px}
   }
 </style>
+<script src="../assets/visit-config.js"></script>
 </head>
 <body>
 
@@ -591,8 +592,9 @@
   // --- Suivi de visite (beacon silencieux, non bloquant) ---
   // Laisser ENDPOINT vide tant qu'aucun backend de comptage n'est déployé.
   (function () {
-    var ENDPOINT = ""; // ex : "https://visites-demos.<sous-domaine>.workers.dev"
-    var PAGE_SLUG = "home-staging";
+    var ENDPOINT = window.DEMO_VISITS_ENDPOINT || "";
+    var cible = new URLSearchParams(window.location.search).get("cible");
+    var PAGE_SLUG = cible && /^agence-[a-z0-9-]+$/.test(cible) ? cible : "home-staging";
     var IP_EXCLUE = "162.120.187.3";
     if (!ENDPOINT) return;
     var envoyer = function () {

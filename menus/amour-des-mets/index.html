@@ -332,6 +332,7 @@
 </style>
 <link rel="stylesheet" href="../../assets/demo-interactions.css">
 <link rel="stylesheet" href="../../assets/google-reviews.css">
+<script src="../../assets/visit-config.js"></script>
 </head>
 <body>
 
@@ -506,7 +507,7 @@
 
   // --- Suivi de visite (beacon silencieux, non bloquant) ---
   // Laisser ENDPOINT vide tant qu'aucun backend de comptage n'est déployé.
-  var ENDPOINT = ""; // ex : "https://visites-demos.<sous-domaine>.workers.dev"
+  var ENDPOINT = window.DEMO_VISITS_ENDPOINT || "";
   var PAGE_SLUG = "menus/amour-des-mets";
   var IP_EXCLUE = "162.120.187.3";
   function trackVisit() {
