@@ -1,0 +1,102 @@
+/* Interactive details shared by the private restaurant menu demos. */
+.demo-icon-button {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ligne, #d1d5db);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--bordeaux, var(--cuivre-fonce, var(--ardoise, #374151)));
+  cursor: pointer;
+  vertical-align: middle;
+  transition: background-color .18s ease, color .18s ease, transform .18s ease;
+}
+
+.demo-icon-button:hover,
+.demo-icon-button:focus-visible {
+  background: var(--bordeaux, var(--graffiti, var(--nature, #374151)));
+  color: #fff;
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.demo-icon-button svg { width: 1rem; height: 1rem; stroke: currentColor; }
+
+.demo-photo-trigger { margin-left: .35rem; }
+
+.ligne-prix, .item, .plat { position: relative; }
+
+.demo-allergen-hover-target {
+  cursor: help;
+  text-decoration: underline dotted currentColor;
+  text-underline-offset: .22em;
+}
+
+.demo-allergen-popover {
+  position: absolute;
+  z-index: 120;
+  top: calc(100% + .45rem);
+  right: 0;
+  width: min(18rem, calc(100vw - 3rem));
+  margin: 0;
+  padding: .8rem .9rem;
+  border: 1px solid var(--ligne, #d1d5db);
+  border-radius: 6px;
+  background: #fff;
+  color: #374151;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .16);
+  font-size: .76rem;
+  line-height: 1.45;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-3px);
+  transition: opacity .16s ease, transform .16s ease, visibility .16s ease;
+}
+
+.demo-allergen-popover.is-open {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.demo-allergen-popover .allergene { font-size: .68rem; }
+
+.demo-photo-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: rgba(16, 18, 20, .84);
+}
+
+.demo-photo-modal[hidden] { display: none; }
+
+.demo-photo-modal__panel {
+  position: relative;
+  width: min(56rem, 100%);
+  max-height: calc(100vh - 2.5rem);
+  overflow: auto;
+  padding: .8rem;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, .42);
+}
+
+.demo-photo-modal__close {
+  position: absolute;
+  z-index: 1;
+  top: 1.1rem;
+  right: 1.1rem;
+  background: rgba(255, 255, 255, .92);
+}
+
+.demo-photo-modal img { width: 100%; display: block; border-radius: 5px; }
+.demo-photo-modal p { margin: .7rem .35rem .2rem; text-align: center; color: #4b5563; font-size: .82rem; }
+body.demo-modal-open { overflow: hidden; }
