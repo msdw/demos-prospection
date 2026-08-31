@@ -43,11 +43,11 @@ var CIBLES = [
   { nom: "Immo Pro Nantes", type: "Home staging", slug: "agence-immo-pro-nantes", pageSlug: "home-staging", code: "", tel: "", statut0: "Mail envoyé", evenement0: { libelle: "Mail envoyé", ts: "2026-08-31T10:50:24+02:00" } },
 
   // --- Réactivation de clients inactifs ---
-  { nom: "Caract'hair", type: "Réactivation", slug: "reactivation-caracthair", pageSlug: "reactivation", code: "", tel: "", statut0: "Mail préparé", evenement0: { libelle: "Mail préparé", ts: "2026-08-31T00:00:00+02:00" } },
-  { nom: "Garage des Anglais", type: "Réactivation", slug: "reactivation-garage-des-anglais", pageSlug: "reactivation", code: "", tel: "", statut0: "Mail préparé", evenement0: { libelle: "Mail préparé", ts: "2026-08-31T00:00:00+02:00" } },
-  { nom: "Gymligne", type: "Réactivation", slug: "reactivation-gymligne", pageSlug: "reactivation", code: "", tel: "", statut0: "Mail préparé", evenement0: { libelle: "Mail préparé", ts: "2026-08-31T00:00:00+02:00" } },
-  { nom: "Bulle de Douces Heures", type: "Réactivation", slug: "reactivation-bulle-douces-heures", pageSlug: "reactivation", code: "", tel: "", statut0: "Mail préparé", evenement0: { libelle: "Mail préparé", ts: "2026-08-31T00:00:00+02:00" } },
-  { nom: "La Fabrik Gym", type: "Réactivation", slug: "reactivation-la-fabrik-gym", pageSlug: "reactivation", code: "", tel: "", statut0: "Mail préparé", evenement0: { libelle: "Mail préparé", ts: "2026-08-31T00:00:00+02:00" } },
+  { nom: "Caract'hair", type: "Réactivation", slug: "reactivation-caracthair", pageSlug: "reactivation", code: "", tel: "", statut0: "Mail envoyé", evenement0: { libelle: "Mail envoyé", ts: "2026-08-31T21:11:09+02:00" } },
+  { nom: "Garage des Anglais", type: "Réactivation", slug: "reactivation-garage-des-anglais", pageSlug: "reactivation", code: "", tel: "", statut0: "Mail envoyé", evenement0: { libelle: "Mail envoyé", ts: "2026-08-31T21:11:09+02:00" } },
+  { nom: "Gymligne", type: "Réactivation", slug: "reactivation-gymligne", pageSlug: "reactivation", code: "", tel: "", statut0: "Mail envoyé", evenement0: { libelle: "Mail envoyé", ts: "2026-08-31T21:11:09+02:00" } },
+  { nom: "Bulle de Douces Heures", type: "Réactivation", slug: "reactivation-bulle-douces-heures", pageSlug: "reactivation", code: "", tel: "", statut0: "Mail envoyé", evenement0: { libelle: "Mail envoyé", ts: "2026-08-31T21:11:09+02:00" } },
+  { nom: "La Fabrik Gym", type: "Réactivation", slug: "reactivation-la-fabrik-gym", pageSlug: "reactivation", code: "", tel: "", statut0: "Mail envoyé", evenement0: { libelle: "Mail envoyé", ts: "2026-08-31T21:11:09+02:00" } },
 
   // --- Pages publiques ---
   { nom: "Home staging virtuel",    type: "Home staging", slug: "home-staging",                code: "",                        tel: "" },
