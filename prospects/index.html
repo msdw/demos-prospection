@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Démonstration personnalisée</title>
+  <script src="../assets/visit-config.js"></script>
+  <script src="data.js"></script>
+  <style>
+    :root { --ink:#172033; --muted:#5d687b; --line:#dce3ea; --paper:#fff; --wash:#f4f7f9; --green:#16854e; --blue:#1169a8; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Inter,Arial,sans-serif; color:var(--ink); background:var(--wash); line-height:1.55; }
+    main { max-width:920px; margin:0 auto; padding:42px 22px 64px; }
+    .top { display:flex; justify-content:space-between; align-items:center; gap:18px; color:var(--muted); font-size:14px; border-bottom:1px solid var(--line); padding-bottom:20px; }
+    .brand { font-weight:800; color:var(--ink); letter-spacing:0; }
+    .sheet { background:var(--paper); border:1px solid var(--line); margin-top:28px; padding:42px; border-radius:8px; }
+    .eyebrow { color:var(--green); font-weight:800; font-size:13px; letter-spacing:0; text-transform:uppercase; }
+    h1 { font-size:clamp(30px,5vw,48px); line-height:1.1; margin:12px 0 16px; letter-spacing:0; }
+    .lead { max-width:680px; color:var(--muted); font-size:18px; }
+    .facts { display:grid; grid-template-columns:repeat(3,1fr); border:1px solid var(--line); margin:32px 0; }
+    .fact { padding:18px; border-right:1px solid var(--line); }
+    .fact:last-child { border-right:0; }
+    .fact b, .fact span { display:block; } .fact b { font-size:20px; } .fact span { color:var(--muted); font-size:13px; }
+    .code { background:#e8f5ee; color:#126238; font-family:ui-monospace,Consolas,monospace; font-weight:800; display:inline-block; padding:9px 12px; border-radius:4px; }
+    .actions { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-top:32px; }
+    .button { display:inline-block; background:var(--blue); color:white; text-decoration:none; padding:13px 18px; font-weight:700; border-radius:5px; }
+    .mail { color:var(--blue); font-weight:700; }
+    .notice { margin-top:34px; color:var(--muted); font-size:14px; }
+    .missing { text-align:center; padding:70px 0; color:var(--muted); }
+    @media (max-width:600px) { .sheet { padding:28px 22px; } .facts { grid-template-columns:1fr; } .fact { border-right:0; border-bottom:1px solid var(--line); } .fact:last-child { border-bottom:0; } }
+  </style>
+</head>
+<body>
+  <main id="app"></main>
+  <script>
+    (function () {
+      var code = new URLSearchParams(location.search).get("code");
+      var lead = (window.PROSPECTS || []).find(function (item) { return item.code === code; });
+      var app = document.getElementById("app");
+      if (!lead) { app.innerHTML = '<div class="missing">Cette démonstration n\'est pas disponible.</div>'; return; }
+      document.title = "Démo - " + lead.name;
+      var target = "../" + lead.sample + "?cible=" + encodeURIComponent(lead.id);
+      app.innerHTML = '<div class="top"><span class="brand">MAAIHUB</span><span>Démonstration préparée pour ' + esc(lead.name) + '</span></div>' +
+        '<section class="sheet"><div class="eyebrow">' + esc(lead.offer) + '</div><h1>' + esc(lead.name) + '</h1>' +
+        '<p class="lead">Voici un aperçu réservé à votre établissement. Il présente le type de réalisation qui peut être adapté à votre activité, sans modifier votre site ou vos outils actuels.</p>' +
+        '<div class="facts"><div class="fact"><b>' + esc(lead.city) + '</b><span>établissement concerné</span></div><div class="fact"><b>' + esc(String(lead.rating)) + ' / 5</b><span>note Google relevée</span></div><div class="fact"><b>' + esc(String(lead.reviews)) + '</b><span>avis Google relevés</span></div></div>' +
+        '<p>Code d\'accès : <span class="code">' + esc(lead.code) + '</span></p><div class="actions"><a class="button" href="' + target + '">Voir l\'aperçu</a><a class="mail" href="mailto:mathurin.ache@maaihub.com?subject=' + encodeURIComponent('Démo ' + lead.name) + '">Échanger avec Mathurin</a></div>' +
+        '<p class="notice">Cette page est une démonstration commerciale. Les données affichées proviennent du profil public de l\'établissement.</p></section>';
+      var endpoint = window.DEMO_VISITS_ENDPOINT || "";
+      if (endpoint) fetch(endpoint + "/track?slug=" + encodeURIComponent("prospect-" + lead.code.toLowerCase()), { mode:"cors" }).catch(function () {});
+      function esc(value) { return String(value).replace(/[&<>"']/g, function (char) { return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[char]; }); }
+    })();
+  </script>
+</body>
+</html>
