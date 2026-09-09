@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Crêperie Moulin Chaugenets — Démo de carte redesignée</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Karla:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brun: #2e2a24;
+    --bleu-breton: #274156;
+    --bleu-fonce: #1b3042;
+    --cidre: #d2a03c;
+    --cidre-clair: #ecd193;
+    --parchemin: #f7f1e3;
+    --parchemin-fonce: #eadfc6;
+    --meule: #4a3f32;
+    --meule-fonce: #332b22;
+    --ligne: #d8caab;
+    --gris: #8d8171;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: "Karla", "Segoe UI", sans-serif;
+    font-weight: 300;
+    background:
+      radial-gradient(ellipse at 85% 10%, rgba(210,160,60,0.09) 0%, transparent 45%),
+      var(--parchemin);
+    color: var(--brun);
+    line-height: 1.65;
+  }
+
+  /* ---------- Écran de verrouillage ---------- */
+  .verrou {
+    position: fixed; inset: 0; z-index: 100;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(210,160,60,0.16) 0%, transparent 55%),
+      linear-gradient(165deg, var(--meule) 0%, var(--meule-fonce) 100%);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem;
+  }
+  .verrou-carte {
+    background: var(--parchemin);
+    max-width: 440px; width: 100%;
+    padding: 2.9rem 2.3rem 2.6rem;
+    text-align: center;
+    border-radius: 8px;
+    border-top: 6px solid var(--cidre);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  }
+  .verrou-carte h1 {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-weight: 600; font-size: 2rem; color: var(--bleu-breton);
+    margin-bottom: 0.5rem;
+  }
+  .verrou-carte .sur {
+    font-size: 0.68rem; letter-spacing: 0.34em; text-transform: uppercase;
+    color: var(--cidre); margin-bottom: 0.9rem; font-weight: 600;
+  }
+  .verrou-carte p { font-size: 0.92rem; color: #6f6450; margin-bottom: 1.5rem; }
+  .verrou-carte input {
+    width: 100%; padding: 0.8rem 0.9rem;
+    font-family: "Karla", sans-serif;
+    font-size: 1rem; text-align: center; letter-spacing: 0.2em;
+    border: 2px solid var(--ligne); border-radius: 6px;
+    background: #fff; color: var(--brun);
+    margin-bottom: 0.8rem; text-transform: uppercase;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+  .verrou-carte input:focus { outline: none; border-color: var(--cidre); box-shadow: 0 0 0 4px rgba(210,160,60,0.18); }
+  .verrou-carte button {
+    width: 100%; padding: 0.9rem; border-radius: 6px;
+    background: linear-gradient(180deg, var(--bleu-breton) 0%, var(--bleu-fonce) 100%);
+    color: #fff; border: none; cursor: pointer;
+    font-family: "Karla", sans-serif;
+    font-size: 0.82rem; letter-spacing: 0.26em; text-transform: uppercase; font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .verrou-carte button:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(39,65,86,0.4); }
+  .verrou-erreur { color: #a03a2a; font-size: 0.82rem; min-height: 1.2em; margin-top: 0.7rem; }
+
+  /* ---------- Filigrane ---------- */
+  .filigrane {
+    position: fixed; inset: -50%; z-index: 60;
+    pointer-events: none; overflow: hidden;
+    display: flex; flex-wrap: wrap; align-content: space-around; justify-content: space-around;
+    transform: rotate(-24deg);
+  }
+  .filigrane span {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-weight: 600;
+    font-size: 1.25rem; letter-spacing: 0.25em; white-space: nowrap;
+    color: rgba(39, 65, 86, 0.08);
+    padding: 2.2rem 1.5rem; text-transform: uppercase;
+  }
+
+  .contenu { display: none; }
+  .contenu.visible { display: block; }
+
+  .bandeau-demo {
+    background: var(--meule-fonce);
+    color: #e4d6bd;
+    text-align: center;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.6rem 1rem;
+  }
+
+  .carte { max-width: 780px; margin: 0 auto; padding: 0 1.5rem 3.5rem; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    text-align: center;
+    margin: 2.5rem auto 3.2rem;
+    padding: 3rem 2rem 2.8rem;
+    background: linear-gradient(180deg, #fcf8ee 0%, var(--parchemin-fonce) 100%);
+    border: 2px solid var(--brun);
+    border-radius: 10px;
+    box-shadow: 7px 7px 0 var(--cidre), 0 24px 50px rgba(46,42,36,0.14);
+  }
+  .meule {
+    width: 104px; height: 104px; margin: 0 auto 1.4rem;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle, var(--cidre) 0 12px, var(--brun) 12px 14px,
+        transparent 14px),
+      conic-gradient(from 0deg, var(--meule) 0 12.5%, var(--parchemin-fonce) 12.5% 25%, var(--meule) 25% 37.5%, var(--parchemin-fonce) 37.5% 50%, var(--meule) 50% 62.5%, var(--parchemin-fonce) 62.5% 75%, var(--meule) 75% 87.5%, var(--parchemin-fonce) 87.5% 100%);
+    border: 3px solid var(--brun);
+    box-shadow: 0 10px 24px rgba(46,42,36,0.3);
+  }
+  .sur-titre {
+    font-size: 0.72rem; letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--cidre); margin-bottom: 1.1rem; font-weight: 600;
+  }
+  h1.titre {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(2.3rem, 7.5vw, 3.6rem);
+    color: var(--bleu-breton);
+    line-height: 1.05;
+  }
+  .ornement {
+    display: flex; align-items: center; justify-content: center; gap: 0.8rem;
+    margin: 1.3rem auto 1.2rem;
+  }
+  .ornement::before, .ornement::after { content: ""; width: 56px; height: 2px; background: var(--cidre); border-radius: 2px; }
+  .ornement .hermine { color: var(--cidre); font-size: 1.1rem; }
+  .sous-titre {
+    font-style: italic; font-weight: 300;
+    color: #6f6450; font-size: 1.08rem;
+    max-width: 32rem; margin: 0 auto;
+  }
+  .badges { margin-top: 1.5rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.55rem; }
+  .badge {
+    font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600;
+    color: var(--meule); border: 2px solid var(--cidre);
+    background: rgba(255,255,255,0.65);
+    padding: 0.4rem 0.95rem; border-radius: 999px;
+  }
+  .badge.plein { background: var(--bleu-breton); color: #fff; border-color: var(--bleu-breton); }
+
+  /* ---------- Sections ---------- */
+  section { margin-bottom: 3.2rem; }
+  h2 {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-weight: 600; font-size: 1.7rem; color: var(--bleu-breton);
+    text-align: center; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .h2-filet {
+    display: flex; align-items: center; justify-content: center; gap: 0.7rem;
+    margin: 0.6rem auto 0.5rem;
+  }
+  .h2-filet::before, .h2-filet::after { content: ""; width: 44px; height: 2px; background: var(--cidre); border-radius: 2px; }
+  .h2-filet .point { width: 8px; height: 8px; border-radius: 50%; background: var(--bleu-breton); }
+  .section-note {
+    text-align: center; font-size: 0.9rem; font-style: italic;
+    color: var(--gris); margin-bottom: 1.8rem;
+  }
+
+  .ardoise {
+    background: #fff;
+    border: 2px solid var(--brun);
+    border-radius: 8px;
+    box-shadow: 6px 6px 0 var(--cidre);
+    padding: 1.2rem 1.8rem;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .ardoise:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--cidre); }
+  .ligne-prix {
+    display: flex; align-items: baseline; gap: 0.7rem;
+    padding: 0.85rem 0; flex-wrap: wrap;
+    border-bottom: 1px dashed var(--ligne);
+  }
+  .ligne-prix:last-child { border-bottom: none; }
+  .ligne-prix .nom { font-weight: 600; font-size: 1.04rem; }
+  .ligne-prix .detail { color: var(--gris); font-size: 0.86rem; font-style: italic; }
+  .ligne-prix .points { flex: 1; border-bottom: 2px dotted #cbb98f; transform: translateY(-4px); min-width: 2rem; }
+  .ligne-prix .prix {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 1.3rem; font-weight: 700; color: var(--bleu-breton); white-space: nowrap;
+  }
+  .ligne-prix .tag {
+    font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600;
+    color: #fff; background: var(--bleu-breton);
+    padding: 0.2rem 0.6rem; border-radius: 4px; white-space: nowrap;
+  }
+  .allergenes { flex-basis: 100%; font-size: 0.74rem; color: var(--gris); margin-top: 0.2rem; }
+  .allergene {
+    display: inline-block; border: 1.5px solid var(--ligne); border-radius: 999px;
+    padding: 0.1rem 0.6rem; margin: 0.18rem 0.15rem 0 0;
+    font-size: 0.68rem; font-weight: 400; color: var(--gris); background: var(--parchemin);
+  }
+  .legende-allergenes {
+    text-align: center; font-size: 0.76rem; font-style: italic;
+    color: var(--gris); margin-top: 1.1rem;
+  }
+
+  /* ---------- Photos d'illustration ---------- */
+  .photos { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .photo-fig { margin: 0; }
+  .photo-fig img {
+    width: 100%; display: block; aspect-ratio: 3 / 2; object-fit: cover;
+    border: 2px solid var(--brun); border-radius: 8px;
+    box-shadow: 5px 5px 0 var(--cidre);
+  }
+  .photo-fig figcaption {
+    margin-top: 0.65rem; text-align: center;
+    font-size: 0.78rem; font-style: italic; color: var(--gris);
+  }
+  .note-photos {
+    text-align: center; font-size: 0.74rem; color: #afa389;
+    margin-top: 1.1rem; letter-spacing: 0.03em;
+  }
+
+  .note-carte {
+    text-align: center; font-size: 0.92rem; font-style: italic; color: var(--gris);
+    max-width: 34rem; margin: 0 auto;
+  }
+  .note-carte::before {
+    content: ""; display: block; width: 56px; height: 3px; border-radius: 2px;
+    background: var(--cidre); margin: 0 auto 1.4rem;
+  }
+
+  /* ---------- Infos pratiques ---------- */
+  .infos {
+    margin-top: 3.2rem;
+    background:
+      radial-gradient(ellipse at 50% -30%, rgba(210,160,60,0.22) 0%, transparent 60%),
+      linear-gradient(165deg, var(--meule) 0%, var(--meule-fonce) 100%);
+    color: var(--parchemin);
+    border-radius: 10px;
+    padding: 2.4rem 2rem;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem;
+    box-shadow: 0 20px 45px rgba(46,42,36,0.3);
+    border-top: 5px solid var(--cidre);
+  }
+  .infos .info { text-align: center; }
+  .infos .info-titre {
+    font-size: 0.64rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--cidre-clair); margin-bottom: 0.6rem; font-weight: 600;
+  }
+  .infos .info-texte { font-size: 0.92rem; line-height: 1.7; color: #ede2c9; }
+  .infos .info-texte em { color: #c3b59a; }
+
+  .mention-reconstitution {
+    max-width: 780px; margin: 0 auto; padding: 0 1.5rem 2.2rem;
+    text-align: center; font-size: 0.74rem; color: #afa389; letter-spacing: 0.04em;
+  }
+
+  /* ---------- Footer CTA ---------- */
+  .cta {
+    background:
+      radial-gradient(ellipse at 50% -20%, rgba(210,160,60,0.2) 0%, transparent 60%),
+      linear-gradient(180deg, var(--meule) 0%, var(--meule-fonce) 100%);
+    color: var(--parchemin);
+    text-align: center; padding: 3.6rem 1.5rem 3.2rem;
+    border-top: 6px solid var(--cidre);
+  }
+  .cta .sur-cta { font-size: 0.66rem; letter-spacing: 0.34em; text-transform: uppercase; color: var(--cidre-clair); margin-bottom: 1rem; font-weight: 600; }
+  .cta h3 {
+    font-family: "Cormorant Garamond", Georgia, serif; font-weight: 600;
+    font-size: clamp(1.5rem, 4vw, 2rem); margin-bottom: 0.9rem;
+  }
+  .cta .offre { font-size: 1rem; margin-bottom: 0.4rem; color: #ddcfb6; }
+  .cta .offre strong { color: #fff; }
+  .cta .prix-cta {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 2.7rem; font-weight: 700; color: var(--cidre);
+    margin: 1rem 0 1.7rem; line-height: 1;
+  }
+  .cta .prix-cta small { display: block; font-family: "Karla", sans-serif; font-size: 0.72rem; letter-spacing: 0.26em; text-transform: uppercase; color: #c3b59a; margin-top: 0.5rem; font-weight: 400; }
+  .cta .contact { font-size: 0.92rem; line-height: 2; color: #c3b59a; }
+  .cta .contact a { color: #fff; text-decoration: none; border-bottom: 1px solid var(--cidre); transition: color 0.2s; }
+  .cta .contact a:hover { color: var(--cidre-clair); }
+  .cta .contact .nom { font-size: 1.02rem; color: #fff; letter-spacing: 0.1em; font-weight: 600; }
+
+  @media (max-width: 600px) {
+    .infos { grid-template-columns: 1fr; gap: 1.3rem; padding: 2rem 1.4rem; }
+    .hero { padding: 2.4rem 1.3rem 2.3rem; box-shadow: 5px 5px 0 var(--cidre); }
+    .ardoise { padding: 0.8rem 1.2rem; box-shadow: 4px 4px 0 var(--cidre); }
+    .photos { grid-template-columns: 1fr; }
+    .photo-fig img { box-shadow: 4px 4px 0 var(--cidre); }
+    .ligne-prix .detail { display: block; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="verrou" id="verrou">
+  <div class="verrou-carte">
+    <p class="sur">Démo privée</p>
+    <h1>Moulin Chaugenets</h1>
+    <p>Cette proposition de redesign de carte est protégée.<br>Saisissez le code d'accès communiqué par votre contact.</p>
+    <form id="form-verrou">
+      <input type="text" id="code" autocomplete="off" placeholder="CODE D'ACCÈS" aria-label="Code d'accès">
+      <button type="submit">Déverrouiller la démo</button>
+    </form>
+    <p class="verrou-erreur" id="erreur"></p>
+  </div>
+</div>
+
+<div class="filigrane" id="filigrane" aria-hidden="true"></div>
+
+<div class="contenu" id="contenu">
+
+<div class="bandeau-demo">Démo — proposition de redesign, offerte sans engagement</div>
+
+<div class="carte">
+
+  <header class="hero">
+    <div class="meule" aria-hidden="true"></div>
+    <p class="sur-titre">Crêperie — Saint-Étienne-de-Montluc</p>
+    <h1 class="titre">Crêperie<br>Moulin Chaugenets</h1>
+    <div class="ornement" aria-hidden="true"><span class="hermine">&#10087;</span></div>
+    <p class="sous-titre">Dans un vieux moulin restauré face à la campagne&nbsp;: galettes au blé noir, crêpes au froment, cidres et pâtisseries maison.</p>
+    <p class="badges">
+      <span class="badge plein">Ancien moulin restauré</span>
+      <span class="badge">Galettes &amp; crêpes maison</span>
+      <span class="badge">Terrasse campagne</span>
+    </p>
+  </header>
+
+  <section>
+    <h2>Les galettes</h2>
+    <div class="h2-filet" aria-hidden="true"><span class="point"></span></div>
+    <p class="section-note">Exemples — au blé noir, la carte n'étant pas publiée en ligne</p>
+    <div class="ardoise">
+      <div class="ligne-prix">
+        <span class="nom">Galette complète</span>
+        <span class="tag">La classique</span>
+        <span class="detail">— œuf, jambon, fromage</span>
+        <span class="points"></span>
+        <p class="allergenes">Allergènes (estimés)&nbsp;:
+          <span class="allergene">Œufs</span><span class="allergene">Lactose</span>
+        </p>
+      </div>
+      <div class="ligne-prix">
+        <span class="nom">Galette du moment</span>
+        <span class="detail">— la création de la maison</span>
+        <span class="points"></span>
+        <p class="allergenes">Allergènes (estimés)&nbsp;:
+          <span class="allergene">Œufs</span><span class="allergene">Lactose</span><span class="allergene">Moutarde</span>
+        </p>
+      </div>
+      <div class="ligne-prix">
+        <span class="nom">Salade généreuse</span>
+        <span class="detail">— la fraîcheur de la carte</span>
+        <span class="points"></span>
+        <p class="allergenes">Allergènes (estimés)&nbsp;:
+          <span class="allergene">Œufs</span><span class="allergene">Moutarde</span><span class="allergene">Sulfites</span>
+        </p>
+      </div>
+    </div>
+    <p class="legende-allergenes">Allergènes estimés — liste définitive à valider avec le restaurant</p>
+  </section>
+
+  <section>
+    <h2>Les crêpes &amp; douceurs</h2>
+    <div class="h2-filet" aria-hidden="true"><span class="point"></span></div>
+    <p class="section-note">Exemples — au froment, avec les pâtisseries maison</p>
+    <div class="ardoise">
+      <div class="ligne-prix">
+        <span class="nom">Crêpe beurre-sucre</span>
+        <span class="tag">L'indémodable</span>
+        <span class="points"></span>
+        <p class="allergenes">Allergènes (estimés)&nbsp;:
+          <span class="allergene">Gluten</span><span class="allergene">Œufs</span><span class="allergene">Lactose</span>
+        </p>
+      </div>
+      <div class="ligne-prix">
+        <span class="nom">Crêpe gourmande</span>
+        <span class="detail">— caramel, chocolat ou coulis du moment</span>
+        <span class="points"></span>
+        <p class="allergenes">Allergènes (estimés)&nbsp;:
+          <span class="allergene">Gluten</span><span class="allergene">Œufs</span><span class="allergene">Lactose</span><span class="allergene">Fruits à coque</span>
+        </p>
+      </div>
+      <div class="ligne-prix">
+        <span class="nom">Pâtisserie maison</span>
+        <span class="detail">— la douceur du jour</span>
+        <span class="points"></span>
+        <p class="allergenes">Allergènes (estimés)&nbsp;:
+          <span class="allergene">Gluten</span><span class="allergene">Œufs</span><span class="allergene">Lactose</span>
+        </p>
+      </div>
+      <div class="ligne-prix">
+        <span class="nom">Cidre</span>
+        <span class="detail">— brut ou doux, en bolée</span>
+        <span class="points"></span>
+        <p class="allergenes">Allergènes (estimés)&nbsp;:
+          <span class="allergene">Sulfites</span>
+        </p>
+      </div>
+    </div>
+    <p class="legende-allergenes">Allergènes estimés — liste définitive à valider avec le restaurant</p>
+  </section>
+
+  <section>
+    <h2>En images</h2>
+    <div class="h2-filet" aria-hidden="true"><span class="point"></span></div>
+    <p class="section-note">La galette complète et la crêpe au caramel, avec sa bolée de cidre</p>
+    <div class="photos">
+      <figure class="photo-fig">
+        <img src="photo-1.webp" alt="Galette complète au blé noir — œuf miroir, jambon et fromage fondant — avec une bolée de cidre" loading="lazy">
+        <figcaption>Galette complète et bolée de cidre</figcaption>
+      </figure>
+      <figure class="photo-fig">
+        <img src="photo-2.webp" alt="Crêpe au froment nappée de caramel au beurre salé, pliée en triangle sur une assiette en faïence" loading="lazy">
+        <figcaption>Crêpe au caramel beurre salé</figcaption>
+      </figure>
+    </div>
+    <p class="note-photos">Photo d'illustration générée par IA — les photos des vrais plats remplaceront celles-ci</p>
+  </section>
+
+  <p class="note-carte">
+    Carte non publiée en ligne — exemples inspirés des avis clients et de la tradition crêperie.
+    Chaque galette, crêpe et prix sera confirmé avec la crêperie avant toute diffusion.
+  </p>
+
+  <aside class="infos">
+    <div class="info">
+      <p class="info-titre">Adresse</p>
+      <p class="info-texte">Moulin du Chaugenet<br>44360 Saint-Étienne-de-Montluc</p>
+    </div>
+    <div class="info">
+      <p class="info-titre">Cadre</p>
+      <p class="info-texte">Ancien moulin restauré<br><em>terrasse face à la campagne</em></p>
+    </div>
+    <div class="info">
+      <p class="info-titre">Bon à savoir</p>
+      <p class="info-texte">Réservation conseillée<br><em>le week-end et en groupe — parking gratuit</em></p>
+    </div>
+  </aside>
+
+</div>
+
+<p class="mention-reconstitution">
+  Carte reconstituée à partir d'informations publiques — à valider par le restaurateur&nbsp;:
+  chaque plat, prix et allergène sera confirmé avant toute diffusion.
+</p>
+
+<footer class="cta">
+  <p class="sur-cta">Cette démo vous plaît&nbsp;?</p>
+  <h3>Une carte aussi chaleureuse que votre vieux moulin</h3>
+  <p class="offre">Version finalisée <strong>(print + mobile + QR code)</strong></p>
+  <p class="prix-cta">300&nbsp;€<small>une fois &middot; sans abonnement</small></p>
+  <p class="contact">
+    <span class="nom">Mathurin ACHE ARNAUD</span><br>
+    <a href="mailto:mathurin.ache@maaihub.com">mathurin.ache@maaihub.com</a><br>
+    <a href="tel:+33683959720">06.83.95.97.20</a>
+  </p>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  var HASH_ATTENDU = "458c3a374b983210ddde5902a3b0c7c40c0651c0a3b6be001c8887e779a02c5a";
+  var NOM = "DÉMO — Moulin Chaugenets";
+
+  // --- Suivi de visite (beacon silencieux, non bloquant) ---
+  // Laisser ENDPOINT vide tant qu'aucun backend de comptage n'est déployé.
+  var ENDPOINT = ""; // ex : "https://visites-demos.<sous-domaine>.workers.dev"
+  var PAGE_SLUG = "menus/moulin-chaugenets";
+  var IP_EXCLUE = "162.120.187.3";
+  function trackVisit() {
+    if (!ENDPOINT) return;
+    var envoyer = function () {
+      fetch(ENDPOINT + "/track?slug=" + encodeURIComponent(PAGE_SLUG), { mode: "cors" }).catch(function () {});
+    };
+    fetch("https://api.ipify.org?format=json").then(function (r) { return r.json(); }).then(function (d) {
+      if (d && d.ip === IP_EXCLUE) return;
+      envoyer();
+    }).catch(function () { envoyer(); });
+  }
+
+  var fg = document.getElementById("filigrane");
+  var html = "";
+  for (var i = 0; i < 120; i++) html += "<span>" + NOM + "</span>";
+  fg.innerHTML = html;
+
+  function sha256(texte) {
+    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(texte)).then(function (buf) {
+      return Array.prototype.map.call(new Uint8Array(buf), function (o) {
+        return ("0" + o.toString(16)).slice(-2);
+      }).join("");
+    });
+  }
+
+  document.getElementById("form-verrou").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var saisie = document.getElementById("code").value.toUpperCase().replace(/\s+/g, "");
+    var erreur = document.getElementById("erreur");
+    sha256(saisie).then(function (h) {
+      if (h === HASH_ATTENDU) {
+        document.getElementById("verrou").style.display = "none";
+        document.getElementById("contenu").classList.add("visible");
+        document.body.style.overflow = "";
+        trackVisit();
+      } else {
+        erreur.textContent = "Code incorrect. Vérifiez le code communiqué.";
+      }
+    });
+  });
+  document.body.style.overflow = "hidden";
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Le Chalet — Démo de carte redesignée</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Jost:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bois: #2b2119;
+    --braise: #b84a2b;
+    --braise-fonce: #93381f;
+    --sapin: #37503c;
+    --sapin-fonce: #26392b;
+    --creme: #f5ecdd;
+    --creme-fonce: #e9dcc2;
+    --ligne: #d8c8a8;
+    --gris: #8b7d66;
+    --ambre: #dfa245;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: "Jost", "Segoe UI", sans-serif;
+    font-weight: 300;
+    background:
+      radial-gradient(ellipse at 12% 8%, rgba(184,74,43,0.08) 0%, transparent 45%),
+      var(--creme);
+    color: var(--bois);
+    line-height: 1.65;
+  }
+
+  /* ---------- Écran de verrouillage ---------- */
+  .verrou {
+    position: fixed; inset: 0; z-index: 100;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(223,162,69,0.16) 0%, transparent 55%),
+      linear-gradient(165deg, var(--sapin) 0%, var(--sapin-fonce) 100%);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem;
+  }
+  .verrou-carte {
+    background: var(--creme);
+    max-width: 440px; width: 100%;
+    padding: 2.9rem 2.3rem 2.6rem;
+    text-align: center;
+    border-radius: 8px;
+    border-top: 6px solid var(--braise);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  }
+  .verrou-carte h1 {
+    font-family: "Alfa Slab One", Georgia, serif;
+    font-weight: 400; font-size: 1.9rem; color: var(--braise-fonce);
+    margin-bottom: 0.5rem;
+  }
+  .verrou-carte .sur {
+    font-size: 0.68rem; letter-spacing: 0.34em; text-transform: uppercase;
+    color: var(--sapin); margin-bottom: 0.9rem; font-weight: 600;
+  }
+  .verrou-carte p { font-size: 0.92rem; color: #6e624f; margin-bottom: 1.5rem; }
+  .verrou-carte input {
+    width: 100%; padding: 0.8rem 0.9rem;
+    font-family: "Jost", sans-serif;
+    font-size: 1rem; text-align: center; letter-spacing: 0.2em;
+    border: 2px solid var(--ligne); border-radius: 6px;
+    background: #fff; color: var(--bois);
+    margin-bottom: 0.8rem; text-transform: uppercase;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+  .verrou-carte input:focus { outline: none; border-color: var(--ambre); box-shadow: 0 0 0 4px rgba(223,162,69,0.18); }
+  .verrou-carte button {
+    width: 100%; padding: 0.9rem; border-radius: 6px;
+    background: linear-gradient(180deg, var(--braise) 0%, var(--braise-fonce) 100%);
+    color: #fff; border: none; cursor: pointer;
+    font-family: "Jost", sans-serif;
+    font-size: 0.82rem; letter-spacing: 0.26em; text-transform: uppercase; font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .verrou-carte button:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(184,74,43,0.4); }
+  .verrou-erreur { color: #a03a2a; font-size: 0.82rem; min-height: 1.2em; margin-top: 0.7rem; }
+
+  /* ---------- Filigrane ---------- */
+  .filigrane {
+    position: fixed; inset: -50%; z-index: 60;
+    pointer-events: none; overflow: hidden;
+    display: flex; flex-wrap: wrap; align-content: space-around; justify-content: space-around;
+    transform: rotate(-24deg);
+  }
+  .filigrane span {
+    font-family: "Alfa Slab One", Georgia, serif;
+    font-size: 1.2rem; letter-spacing: 0.22em; white-space: nowrap;
+    color: rgba(184, 74, 43, 0.08);
+    padding: 2.2rem 1.5rem; text-transform: uppercase;
+  }
+
+  .contenu { display: none; }
+  .contenu.visible { display: block; }
+
+  .bandeau-demo {
+    background: var(--sapin-fonce);
+    color: #e5d8bf;
+    text-align: center;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.6rem 1rem;
+  }
+
+  .carte { max-width: 780px; margin: 0 auto; padding: 0 1.5rem 3.5rem; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    text-align: center;
+    margin: 2.5rem auto 3.2rem;
+    padding: 3rem 2rem 2.8rem;
+    background: linear-gradient(180deg, #fbf5e9 0%, var(--creme-fonce) 100%);
+    border: 2px solid var(--bois);
+    border-radius: 10px;
+    box-shadow: 7px 7px 0 var(--ambre), 0 24px 50px rgba(43,33,25,0.14);
+  }
+  .gril {
+    width: 104px; height: 104px; margin: 0 auto 1.4rem;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle, var(--ambre) 0 12px, var(--bois) 12px 14px, transparent 14px),
+      repeating-linear-gradient(45deg, var(--sapin) 0 8px, var(--sapin-fonce) 8px 16px);
+    border: 3px solid var(--bois);
+    box-shadow: 0 10px 24px rgba(43,33,25,0.3);
+  }
+  .sur-titre {
+    font-size: 0.72rem; letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--braise); margin-bottom: 1.1rem; font-weight: 600;
+  }
+  h1.titre {
+    font-family: "Alfa Slab One", Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(2.6rem, 9vw, 4rem);
+    color: var(--braise-fonce);
+    line-height: 1.05;
+  }
+  .ornement {
+    display: flex; align-items: center; justify-content: center; gap: 0.8rem;
+    margin: 1.3rem auto 1.2rem;
+  }
+  .ornement::before, .ornement::after { content: ""; width: 56px; height: 2px; background: var(--ambre); border-radius: 2px; }
+  .ornement .flamme { color: var(--braise); font-size: 1.1rem; }
+  .sous-titre {
+    font-style: italic; font-weight: 300;
+    color: #6e624f; font-size: 1.08rem;
+    max-width: 32rem; margin: 0 auto;
+  }
+  .badges { margin-top: 1.5rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.55rem; }
+  .badge {
+    font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600;
+    color: var(--sapin); border: 2px solid var(--ambre);
+    background: rgba(255,255,255,0.65);
+    padding: 0.4rem 0.95rem; border-radius: 999px;
+  }
+  .badge.plein { background: var(--braise); color: #fff; border-color: var(--braise); }
+
+  /* ---------- Sections ---------- */
+  section { margin-bottom: 3.2rem; }
+  h2 {
+    font-family: "Alfa Slab One", Georgia, serif;
+    font-weight: 400; font-size: 1.6rem; color: var(--braise-fonce);
+    text-align: center; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .h2-filet {
+    display: flex; align-items: center; justify-content: center; gap: 0.7rem;
+    margin: 0.6rem auto 0.5rem;
+  }
+  .h2-filet::before, .h2-filet::after { content: ""; width: 44px; height: 2px; background: var(--ambre); border-radius: 2px; }
+  .h2-filet .point { width: 8px; height: 8px; border-radius: 50%; background: var(--braise); }
+  .section-note {
+    text-align: center; font-size: 0.9rem; font-style: italic;
+    color: var(--gris); margin-bottom: 1.8rem;
+  }
+
+  .ardoise {
+    background: #fff;
+    border: 2px solid var(--bois);
+    border-radius: 8px;
+    box-shadow: 6px 6px 0 var(--ambre);
+    padding: 1.2rem 1.8rem;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .ardoise:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--ambre); }
+  .ligne-prix {
+    display: flex; align-items: baseline; gap: 0.7rem;
+    padding: 0.85rem 0; flex-wrap: wrap;
+    border-bottom: 1px dashed var(--ligne);
+  }
+  .ligne-prix:last-child { border-bottom: none; }
+  .ligne-prix .nom { font-weight: 600; font-size: 1.04rem; }
+  .ligne-prix .detail { color: var(--gris); font-size: 0.86rem; font-style: italic; }
+  .ligne-prix .points { flex: 1; border-bottom: 2px dotted #ccb889; transform: translateY(-4px); min-width: 2rem; }
+  .ligne-prix .prix {
+    font-family: "Alfa Slab One", Georgia, serif;
+    font-size: 1.2rem; color: var(--braise-fonce); white-space: nowrap;
+  }
+  .ligne-prix .tag {
+    font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600;
+    color: #fff; background: var(--braise);
+    padding: 0.2rem 0.6rem; border-radius: 4px; white-space: nowrap;
+  }
+  .allergenes { flex-basis: 100%; font-size: 0.74rem; color: var(--gris); margin-top: 0.2rem; }
+  .allergene {
+    display: inline-block; border: 1.5px solid var(--ligne); border-radius: 999px;
+    padding: 0.1rem 0.6rem; margin: 0.18rem 0.15rem 0 0;
+    font-size: 0.68rem; font-weight: 400; color: var(--gris); background: var(--creme);
+  }
+  .legende-allergenes {
+    text-align: center; font-size: 0.76rem; font-style: italic;
+    color: var(--gris); margin-top: 1.1rem;
+  }
+
+  /* ---------- Photos d'illustration ---------- */
+  .photos { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .photo-fig { margin: 0; }
+  .photo-fig img {
+    width: 100%; display: block; aspect-ratio: 3 / 2; object-fit: cover;
+    border: 2px solid var(--bois); border-radius: 8px;
+    box-shadow: 5px 5px 0 var(--ambre);
+  }
+  .photo-fig figcaption {
+    margin-top: 0.65rem; text-align: center;
+    font-size: 0.78rem; font-style: italic; color: var(--gris);
+  }
+  .note-photos {
+    text-align: center; font-size: 0.74rem; color: #aca086;
+    margin-top: 1.1rem; letter-spacing: 0.03em;
+  }
+
+  .note-carte {
+    text-align: center; font-size: 0.92rem; font-style: italic; color: var(--gris);
+    max-width: 34rem; margin: 0 auto;
+  }
+  .note-carte::before {
+    content: ""; display: block; width: 56px; height: 3px; border-radius: 2px;
+    background: var(--ambre); margin: 0 auto 1.4rem;
+  }
+
+  /* ---------- Infos pratiques ---------- */
+  .infos {
+    margin-top: 3.2rem;
+    background:
+      radial-gradient(ellipse at 50% -30%, rgba(223,162,69,0.22) 0%, transparent 60%),
+      linear-gradient(165deg, var(--sapin) 0%, var(--sapin-fonce) 100%);
+    color: var(--creme);
+    border-radius: 10px;
+    padding: 2.4rem 2rem;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem;
+    box-shadow: 0 20px 45px rgba(43,33,25,0.3);
+    border-top: 5px solid var(--ambre);
+  }
+  .infos .info { text-align: center; }
+  .infos .info-titre {
+    font-size: 0.64rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--ambre); margin-bottom: 0.6rem; font-weight: 600;
+  }
+  .infos .info-texte { font-size: 0.92rem; line-height: 1.7; color: #ece1c9; }
+  .infos .info-texte em { color: #c4b79c; }
+
+  .mention-reconstitution {
+    max-width: 780px; margin: 0 auto; padding: 0 1.5rem 2.2rem;
+    text-align: center; font-size: 0.74rem; color: #aca086; letter-spacing: 0.04em;
+  }
+
+  /* ---------- Footer CTA ---------- */
+  .cta {
+    background:
+      radial-gradient(ellipse at 50% -20%, rgba(223,162,69,0.2) 0%, transparent 60%),
+      linear-gradient(180deg, var(--sapin) 0%, var(--sapin-fonce) 100%);
+    color: var(--creme);
+    text-align: center; padding: 3.6rem 1.5rem 3.2rem;
+    border-top: 6px solid var(--ambre);
+  }
+  .cta .sur-cta { font-size: 0.66rem; letter-spacing: 0.34em; text-transform: uppercase; color: var(--ambre); margin-bottom: 1rem; font-weight: 600; }
+  .cta h3 {
+    font-family: "Alfa Slab One", Georgia, serif; font-weight: 400;
+    font-size: clamp(1.4rem, 4vw, 1.8rem); margin-bottom: 0.9rem;
+  }
+  .cta .offre { font-size: 1rem; margin-bottom: 0.4rem; color: #ddcfb6; }
+  .cta .offre strong { color: #fff; }
+  .cta .prix-cta {
+    font-family: "Alfa Slab One", Georgia, serif;
+    font-size: 2.6rem; color: var(--ambre);
+    margin: 1rem 0 1.7rem; line-height: 1;
+  }
+  .cta .prix-cta small { display: block; font-family: "Jost", sans-serif; font-size: 0.72rem; letter-spacing: 0.26em; text-transform: uppercase; color: #c4b79c; margin-top: 0.5rem; font-weight: 400; }
+  .cta .contact { font-size: 0.92rem; line-height: 2; color: #c4b79c; }
+  .cta .contact a { color: #fff; text-decoration: none; border-bottom: 1px solid var(--ambre); transition: color 0.2s; }
+  .cta .contact a:hover { color: var(--ambre); }
+  .cta .contact .nom { font-size: 1.02rem; color: #fff; letter-spacing: 0.1em; font-weight: 600; }
+
+  @media (max-width: 600px) {
+    .infos { grid-template-columns: 1fr; gap: 1.3rem; padding: 2rem 1.4rem; }
+    .hero { padding: 2.4rem 1.3rem 2.3rem; box-shadow: 5px 5px 0 var(--ambre); }
+    .ardoise { padding: 0.8rem 1.2rem; box-shadow: 4px 4px 0 var(--ambre); }
+    .photos { grid-template-columns: 1fr; }
+    .photo-fig img { box-shadow: 4px 4px 0 var(--ambre); }
+    .ligne-prix .detail { display: block; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="verrou" id="verrou">
+  <div class="verrou-carte">
+    <p class="sur">Démo privée</p>
+    <h1>Le Chalet</h1>
+    <p>Cette proposition de redesign de carte est protégée.<br>Saisissez le code d'accès communiqué par votre contact.</p>
+    <form id="form-verrou">
+      <input type="text" id="code" autocomplete="off" placeholder="CODE D'ACCÈS" aria-label="Code d'accès">
+      <button type="submit">Déverrouiller la démo</button>
+    </form>
+    <p class="verrou-erreur" id="erreur"></p>
+  </div>
+</div>
+
+<div class="filigrane" id="filigrane" aria-hidden="true"></div>
+
+<div class="contenu" id="contenu">
+
+<div class="bandeau-demo">Démo — proposition de redesign, offerte sans engagement</div>
+
+<div class="carte">
+
+  <header class="hero">
+    <div class="gril" aria-hidden="true"></div>
+    <p class="sur-titre">Restaurant grill — Vigneux-de-Bretagne</p>
+    <h1 class="titre">Le Chalet</h1>
+    <div class="ornement" aria-hidden="true"><span class="flamme">&#9822;</span></div>
+    <p class="sous-titre">La cantine des gens d'ici&nbsp;: grillades et cuisine traditionnelle, formule du jour imbattable, service rapide et souriant, grande terrasse.</p>
+    <p class="badges">
+      <span class="badge plein">Grillades &amp; traditionnel</span>
+      <span class="badge">Formule du jour</span>
+      <span class="badge">Terrasse 70 places</span>
+    </p>
+  </header>
+
+  <section>
+    <h2>Les formules du midi</h2>
+    <div class="h2-filet" aria-hidden="true"><span class="point"></span></div>
+    <p class="section-note">Prix relevés dans les avis clients 2024–2025 — à revalider avec le restaurant</p>
+    <div class="ardoise">
+      <div class="ligne-prix">
+        <span class="nom">Entrée + plat <em>ou</em> plat + dessert</span>
+        <span class="tag">Bon rapport qualité-prix</span>
+        <span class="points"></span>
+        <span class="prix">11,50&nbsp;€</span>
+        <p class="allergenes">Allergènes (estimés)&nbsp;:
+          <span class="allergene">Gluten</span><span class="allergene">Œufs</span><span class="allergene">Lactose</span><span class="allergene">Moutarde</span>
+        </p>
+      </div>
+      <div class="ligne-prix">
+        <span class="nom">Entrée + plat + dessert</span>
+        <span class="tag">La complète</span>
+        <span class="points"></span>
+        <span class="prix">12,90&nbsp;€</span>
+        <p class="allergenes">Allergènes (estimés)&nbsp;:
+          <span class="allergene">Gluten</span><span class="allergene">Œufs</span><span class="allergene">Lactose</span><span class="allergene">Moutarde</span>
+        </p>
+      </div>
+    </div>
+    <p class="legende-allergenes">Allergènes estimés — liste définitive à valider avec le restaurant</p>
+  </section>
+
+  <section>
+    <h2>Grillades &amp; cuisine traditionnelle</h2>
+    <div class="h2-filet" aria-hidden="true"><span class="point"></span></div>
+    <p class="section-note">Exemples — la carte n'étant pas publiée en ligne</p>
+    <div class="ardoise">
+      <div class="ligne-prix">
+        <span class="nom">Grillade du jour</span>
+        <span class="detail">— viande grillée, garniture maison</span>
+        <span class="points"></span>
+        <p class="allergenes">Allergènes (estimés)&nbsp;:
+          <span class="allergene">Lactose</span><span class="allergene">Moutarde</span><span class="allergene">Sulfites</span>
+        </p>
+      </div>
+      <div class="ligne-prix">
+        <span class="nom">Plat du jour</span>
+        <span class="detail">— la cuisine traditionnelle qui change chaque midi</span>
+        <span class="points"></span>
+        <p class="allergenes">Allergènes (estimés)&nbsp;:
+          <span class="allergene">Gluten</span><span class="allergene">Œufs</span><span class="allergene">Lactose</span><span class="allergene">Céleri</span>
+        </p>
+      </div>
+      <div class="ligne-prix">
+        <span class="nom">Dessert maison</span>
+        <span class="detail">— la douceur qui termine bien le repas</span>
+        <span class="points"></span>
+        <p class="allergenes">Allergènes (estimés)&nbsp;:
+          <span class="allergene">Gluten</span><span class="allergene">Œufs</span><span class="allergene">Lactose</span><span class="allergene">Fruits à coque</span>
+        </p>
+      </div>
+    </div>
+    <p class="legende-allergenes">Allergènes estimés — liste définitive à valider avec le restaurant</p>
+  </section>
+
+  <section>
+    <h2>En images</h2>
+    <div class="h2-filet" aria-hidden="true"><span class="point"></span></div>
+    <p class="section-note">La grillade et le dessert maison, façon routier gourmand</p>
+    <div class="photos">
+      <figure class="photo-fig">
+        <img src="photo-1.webp" alt="Entrecôte grillée marquée au gril, frites dorées et salade, servie dans un plat de restaurant traditionnel" loading="lazy">
+        <figcaption>Grillade du jour, frites maison</figcaption>
+      </figure>
+      <figure class="photo-fig">
+        <img src="photo-2.webp" alt="Tarte aux pommes maison, part généreuse avec boule de glace vanille et filet de caramel" loading="lazy">
+        <figcaption>Dessert maison du jour</figcaption>
+      </figure>
+    </div>
+    <p class="note-photos">Photo d'illustration générée par IA — les photos des vrais plats remplaceront celles-ci</p>
+  </section>
+
+  <p class="note-carte">
+    Prix des formules relevés dans les avis clients (2024–2025) — plats présentés en exemples,
+    la carte n'étant pas publiée en ligne. Tout sera confirmé avec le Chalet avant toute diffusion.
+  </p>
+
+  <aside class="infos">
+    <div class="info">
+      <p class="info-titre">Adresse</p>
+      <p class="info-texte">4 rue Henri Farman<br>44360 Vigneux-de-Bretagne</p>
+    </div>
+    <div class="info">
+      <p class="info-titre">Service</p>
+      <p class="info-texte">Du lundi au samedi midi<br><em>service rapide, accueil familial</em></p>
+    </div>
+    <div class="info">
+      <p class="info-titre">Pratique</p>
+      <p class="info-texte">Terrasse 70 places<br><em>accès handicapé, animaux acceptés</em></p>
+    </div>
+  </aside>
+
+</div>
+
+<p class="mention-reconstitution">
+  Carte reconstituée à partir d'informations publiques — à valider par le restaurateur&nbsp;:
+  chaque plat, prix et allergène sera confirmé avant toute diffusion.
+</p>
+
+<footer class="cta">
+  <p class="sur-cta">Cette démo vous plaît&nbsp;?</p>
+  <h3>Une carte aussi généreuse que vos formules</h3>
+  <p class="offre">Version finalisée <strong>(print + mobile + QR code)</strong></p>
+  <p class="prix-cta">300&nbsp;€<small>une fois &middot; sans abonnement</small></p>
+  <p class="contact">
+    <span class="nom">Mathurin ACHE ARNAUD</span><br>
+    <a href="mailto:mathurin.ache@maaihub.com">mathurin.ache@maaihub.com</a><br>
+    <a href="tel:+33683959720">06.83.95.97.20</a>
+  </p>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  var HASH_ATTENDU = "23abf907dbd936611e1832249dfcd9f2fd4e124bca59e2ae1c3669943f259bb7";
+  var NOM = "DÉMO — Le Chalet";
+
+  // --- Suivi de visite (beacon silencieux, non bloquant) ---
+  // Laisser ENDPOINT vide tant qu'aucun backend de comptage n'est déployé.
+  var ENDPOINT = ""; // ex : "https://visites-demos.<sous-domaine>.workers.dev"
+  var PAGE_SLUG = "menus/le-chalet";
+  var IP_EXCLUE = "162.120.187.3";
+  function trackVisit() {
+    if (!ENDPOINT) return;
+    var envoyer = function () {
+      fetch(ENDPOINT + "/track?slug=" + encodeURIComponent(PAGE_SLUG), { mode: "cors" }).catch(function () {});
+    };
+    fetch("https://api.ipify.org?format=json").then(function (r) { return r.json(); }).then(function (d) {
+      if (d && d.ip === IP_EXCLUE) return;
+      envoyer();
+    }).catch(function () { envoyer(); });
+  }
+
+  var fg = document.getElementById("filigrane");
+  var html = "";
+  for (var i = 0; i < 120; i++) html += "<span>" + NOM + "</span>";
+  fg.innerHTML = html;
+
+  function sha256(texte) {
+    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(texte)).then(function (buf) {
+      return Array.prototype.map.call(new Uint8Array(buf), function (o) {
+        return ("0" + o.toString(16)).slice(-2);
+      }).join("");
+    });
+  }
+
+  document.getElementById("form-verrou").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var saisie = document.getElementById("code").value.toUpperCase().replace(/\s+/g, "");
+    var erreur = document.getElementById("erreur");
+    sha256(saisie).then(function (h) {
+      if (h === HASH_ATTENDU) {
+        document.getElementById("verrou").style.display = "none";
+        document.getElementById("contenu").classList.add("visible");
+        document.body.style.overflow = "";
+        trackVisit();
+      } else {
+        erreur.textContent = "Code incorrect. Vérifiez le code communiqué.";
+      }
+    });
+  });
+  document.body.style.overflow = "hidden";
+})();
+</script>
+
+</body>
+</html>
