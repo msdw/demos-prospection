@@ -2890,7 +2890,7 @@ window.PROSPECTS = [
     "offer": "Menu digital",
     "rating": 4.3,
     "reviews": 422,
-    "sample": "menus/le-chantilly/"
+    "sample": "sites/dockside/"
   },
   {
     "id": "daily-2026-09-11-restaurant-les-caudalies-saint-herblain-nantes-saint-herblain",
