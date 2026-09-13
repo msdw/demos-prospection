@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<script>
+(function () {
+  var params = new URLSearchParams(location.search);
+  if (params.get("cible") === "daily-2026-09-10-chez-teta-vigneux-de-bretagne" || params.get("code") === "MENU10092605") {
+    location.replace("../chez-teta/" + location.search + location.hash);
+  }
+})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
