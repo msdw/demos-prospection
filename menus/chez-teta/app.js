@@ -10,6 +10,8 @@ const dishes = [
 {id:"baklava",name:"Baklava",type:"dessert",label:"DESSERT",description:"Pâtisserie garnie de fruits à coque.",image:base+"2024/02/Chez-TETA_dessert_BAKLAVA-1024x1022.jpg"}
 ];
 const selected = new Set();
+const details = window.TETA_DISH_DETAILS || {};
+let currentDetail = null;
 const icons = () => { if(window.lucide) window.lucide.createIcons(); };
 const money = amount => new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(amount);
 const today = new Date();
@@ -22,7 +24,51 @@ $("unlock").addEventListener("submit", event => {
  const endpoint=window.DEMO_VISITS_ENDPOINT;
  if(endpoint) fetch(endpoint+"/track?slug=menus%2Fchez-teta",{mode:"cors"}).catch(()=>{});
 });
-$("dishes").innerHTML = dishes.map(d => `<article class="dish" data-type="${d.type}"><div class="dish-photo"><img src="${d.image}" alt="${d.name}, photo de Chez Teta" loading="lazy"><button type="button" class="icon zoom" data-photo="${d.id}" aria-label="Agrandir la photo de ${d.name}" title="Agrandir la photo"><i data-lucide="eye"></i></button></div><p class="kind">${d.label}</p><div class="dish-header"><h3><span class="dish-name" tabindex="0" aria-describedby="allergen-${d.id}">${d.name}<span class="allergens" id="allergen-${d.id}" role="tooltip">Allergènes : liste complète et contaminations croisées à confirmer auprès de Chez Teta avant de commander.</span></span></h3><button type="button" class="icon add" data-add="${d.id}" aria-label="Ajouter ${d.name} à mes envies" aria-pressed="false" title="Ajouter à mes envies"><i data-lucide="plus"></i></button></div><p>${d.description}</p></article>`).join("");
+$("dishes").innerHTML = dishes.map(d => `<article class="dish" data-type="${d.type}"><div class="dish-photo"><img src="${d.image}" alt="${d.name}, photo de Chez Teta" loading="lazy"><button type="button" class="icon zoom" data-photo="${d.id}" aria-label="Agrandir la photo de ${d.name}" title="Agrandir la photo"><i data-lucide="eye"></i></button></div><p class="kind">${d.label}</p><div class="dish-header"><h3><button type="button" class="dish-name" data-allergen="${d.id}" aria-haspopup="dialog" aria-describedby="allergen-${d.id}">${d.name}<span class="allergens" id="allergen-${d.id}" role="tooltip"></span></button></h3><button type="button" class="icon add" data-add="${d.id}" aria-label="Ajouter ${d.name} à mes envies" aria-pressed="false" title="Ajouter à mes envies"><i data-lucide="plus"></i></button></div><p>${d.description}</p></article>`).join("");
+
+document.querySelectorAll("[data-allergen]").forEach(button => {
+ const info=details[button.dataset.allergen];
+ button.querySelector(".allergens").textContent=info?info.allergens:"Liste à confirmer auprès de Chez Teta.";
+ button.addEventListener("click",()=>{
+  const dish=dishes.find(d=>d.id===button.dataset.allergen);currentDetail=dish;
+  $("allergen-title").textContent=dish.name;
+  $("allergen-ingredients").textContent=info.ingredients;
+  $("allergen-details").textContent=info.allergens;
+  $("allergen-source").href=info.source;
+  $("allergen-dialog").showModal();
+ });
+ button.addEventListener("keydown",e=>{if(e.key==="Escape"){button.blur();}});
+});
+$("ask-allergen").addEventListener("click",()=>{
+ if(!currentDetail)return;
+ const question="Merci de confirmer les allergènes et les risques de contamination croisée pour : "+currentDetail.name+".";
+ if(!$("notes").value.includes(question)){
+  if(($("notes").value+"\n"+question).trim().length>800){$("allergen-dialog").close();$("notes").focus();return;}
+  $("notes").value=[$("notes").value.trim(),question].filter(Boolean).join("\n");
+ }
+ $("allergen-dialog").close();
+ $("demande").scrollIntoView({behavior:"smooth"});
+ $("notes").focus({preventScroll:true});
+});
+const reviewData=window.TETA_REVIEWS;
+if(reviewData && reviewData.placeId==="ChIJv3rLTlmMBUgRqwqpUej6EiQ" && reviewData.reviews.length===5){
+ const formatDate=value=>new Intl.DateTimeFormat("fr-FR",{day:"numeric",month:"long",year:"numeric",timeZone:"Europe/Paris"}).format(new Date(value));
+ $("reviews-date").textContent="Relevé du "+formatDate(reviewData.collectedAt)+".";
+ const reviews=reviewData.reviews.slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
+ reviews.forEach(review=>{
+  const article=document.createElement("article");article.className="review-card";
+  const header=document.createElement("div");header.className="review-card-heading";
+  const stars=document.createElement("span");stars.className="review-stars";stars.setAttribute("aria-label",review.rating+" étoiles sur 5");stars.textContent="★".repeat(review.rating)+"☆".repeat(5-review.rating);
+  const label=document.createElement("span");label.textContent="Google";
+  header.append(stars,label);
+  const date=document.createElement("time");date.dateTime=review.date;date.textContent=(review.updated?"Modifié le ":"")+formatDate(review.date);
+  const text=document.createElement("p");text.textContent=review.summary||"Avis publié sans commentaire.";
+  const origin=document.createElement("p");origin.className="review-origin";origin.textContent=review.summary?"Résumé de l'avis":"Note seule";
+  const link=document.createElement("a");link.className="text-link";link.href=reviewData.url;link.target="_blank";link.rel="noopener";link.textContent="Consulter sur Google";
+  article.append(header,date,text,origin,link);$("review-list").append(article);
+ });
+}else{$("avis").hidden=true;document.querySelector(".hero-rating").hidden=true;}
+
 function updateSummary() {
  $("dock-count").textContent = selected.size;
  $("selection-items").replaceChildren();
