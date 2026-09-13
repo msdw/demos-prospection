@@ -3,6 +3,7 @@
 var BASE_URL = "https://msdw.github.io/demos-prospection/";
 
 var CIBLES = [
+  { nom: "Chez Teta", type: "Menu", slug: "menus/chez-teta", code: "MENU10092605", tel: "+33 6 33 50 21 64", statut0: "Réponse reçue" },
   // --- Menus (restaurants) ---
   { nom: "L'Amour des mets",        type: "Menu",         slug: "menus/amour-des-mets",        code: "AMOUR2026",               tel: "+33 9 83 72 94 00" },
   { nom: "Le Raffiné",              type: "Menu",         slug: "menus/le-raffine",            code: "RAFFINE2026",             tel: "+33 9 87 31 29 30" },
