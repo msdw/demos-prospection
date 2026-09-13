@@ -1702,7 +1702,7 @@ window.PROSPECTS = [
     "offer": "Menu digital",
     "rating": 4.7,
     "reviews": 77,
-    "sample": "menus/le-chantilly/"
+    "sample": "menus/chez-teta/"
   },
   {
     "id": "daily-2026-09-10-brit-hotel-nantes-vigneux-latlantel-vigneux-de-bretagne",
