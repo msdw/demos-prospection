@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Chez Teta — Démo de menu digital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Jost:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brun: #2e2118;
+    --bordeaux: #7a2e2e;
+    --bordeaux-fonce: #5f2323;
+    --moutarde: #d9a441;
+    --moutarde-clair: #ecc987;
+    --creme: #f6efe3;
+    --creme-fonce: #ece0ca;
+    --vinyle: #40302a;
+    --vinyle-fonce: #2c201b;
+    --ligne: #ddcfb8;
+    --gris: #8f8271;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: "Jost", "Segoe UI", sans-serif;
+    font-weight: 300;
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(217,164,65,0.08) 0%, transparent 45%),
+      var(--creme);
+    color: var(--brun);
+    line-height: 1.65;
+  }
+
+  /* ---------- Écran de verrouillage ---------- */
+  .verrou {
+    position: fixed; inset: 0; z-index: 100;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(217,164,65,0.16) 0%, transparent 55%),
+      linear-gradient(165deg, var(--vinyle) 0%, var(--vinyle-fonce) 100%);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem;
+  }
+  .verrou-carte {
+    background: var(--creme);
+    max-width: 440px; width: 100%;
+    padding: 2.9rem 2.3rem 2.6rem;
+    text-align: center;
+    border-radius: 8px;
+    border-top: 6px solid var(--moutarde);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  }
+  .verrou-carte h1 {
+    font-family: "Abril Fatface", Georgia, serif;
+    font-weight: 400; font-size: 1.9rem; color: var(--bordeaux);
+    margin-bottom: 0.5rem;
+  }
+  .verrou-carte .sur {
+    font-size: 0.68rem; letter-spacing: 0.34em; text-transform: uppercase;
+    color: var(--bordeaux); margin-bottom: 0.9rem; font-weight: 600;
+  }
+  .verrou-carte p { font-size: 0.92rem; color: #71624f; margin-bottom: 1.5rem; }
+  .verrou-carte input {
+    width: 100%; padding: 0.8rem 0.9rem;
+    font-family: "Jost", sans-serif;
+    font-size: 1rem; text-align: center; letter-spacing: 0.2em;
+    border: 2px solid var(--ligne); border-radius: 6px;
+    background: #fff; color: var(--brun);
+    margin-bottom: 0.8rem; text-transform: uppercase;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+  .verrou-carte input:focus { outline: none; border-color: var(--moutarde); box-shadow: 0 0 0 4px rgba(217,164,65,0.18); }
+  .verrou-carte button {
+    width: 100%; padding: 0.9rem; border-radius: 6px;
+    background: linear-gradient(180deg, var(--bordeaux) 0%, var(--bordeaux-fonce) 100%);
+    color: #fff; border: none; cursor: pointer;
+    font-family: "Jost", sans-serif;
+    font-size: 0.82rem; letter-spacing: 0.26em; text-transform: uppercase; font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .verrou-carte button:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(122,46,46,0.4); }
+  .verrou-erreur { color: #a03a2a; font-size: 0.82rem; min-height: 1.2em; margin-top: 0.7rem; }
+
+  /* ---------- Filigrane ---------- */
+  .filigrane {
+    position: fixed; inset: -50%; z-index: 60;
+    pointer-events: none; overflow: hidden;
+    display: flex; flex-wrap: wrap; align-content: space-around; justify-content: space-around;
+    transform: rotate(-24deg);
+  }
+  .filigrane span {
+    font-family: "Abril Fatface", Georgia, serif;
+    font-size: 1.25rem; letter-spacing: 0.25em; white-space: nowrap;
+    color: rgba(122, 46, 46, 0.08);
+    padding: 2.2rem 1.5rem; text-transform: uppercase;
+  }
+
+  .contenu { display: none; }
+  .contenu.visible { display: block; }
+
+  .bandeau-demo {
+    background: var(--vinyle-fonce);
+    color: #e3d5bd;
+    text-align: center;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.6rem 1rem;
+  }
+
+  .carte { max-width: 780px; margin: 0 auto; padding: 0 1.5rem 3.5rem; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    text-align: center;
+    margin: 2.5rem auto 3.2rem;
+    padding: 3rem 2rem 2.8rem;
+    background: linear-gradient(180deg, #fdf9f0 0%, var(--creme-fonce) 100%);
+    border: 2px solid var(--brun);
+    border-radius: 10px;
+    box-shadow: 7px 7px 0 var(--moutarde), 0 24px 50px rgba(46,33,24,0.14);
+  }
+  .vinyle {
+    width: 104px; height: 104px; margin: 0 auto 1.4rem;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle, var(--moutarde) 0 15px, var(--brun) 15px 17px,
+        transparent 17px),
+      repeating-radial-gradient(circle, var(--vinyle) 0 4px, var(--brun) 4px 6px);
+    border: 3px solid var(--brun);
+    box-shadow: 0 10px 24px rgba(46,33,24,0.3);
+    animation: tourne 14s linear infinite;
+  }
+  @keyframes tourne { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .vinyle { animation: none; } }
+  .sur-titre {
+    font-size: 0.72rem; letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--bordeaux); margin-bottom: 1.1rem; font-weight: 600;
+  }
+  h1.titre {
+    font-family: "Abril Fatface", Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(2.6rem, 8vw, 3.9rem);
+    color: var(--bordeaux);
+    line-height: 1.05;
+  }
+  .ornement {
+    display: flex; align-items: center; justify-content: center; gap: 0.8rem;
+    margin: 1.3rem auto 1.2rem;
+  }
+  .ornement::before, .ornement::after { content: ""; width: 56px; height: 2px; background: var(--moutarde); border-radius: 2px; }
+  .ornement .note-musique { color: var(--moutarde); font-size: 1.1rem; }
+  .sous-titre {
+    font-style: italic; font-weight: 300;
+    color: #71624f; font-size: 1.08rem;
+    max-width: 32rem; margin: 0 auto;
+  }
+  .badges { margin-top: 1.5rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.55rem; }
+  .badge {
+    font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600;
+    color: var(--vinyle); border: 2px solid var(--moutarde);
+    background: rgba(255,255,255,0.65);
+    padding: 0.4rem 0.95rem; border-radius: 999px;
+  }
+  .badge.plein { background: var(--bordeaux); color: #fff; border-color: var(--bordeaux); }
+
+  /* ---------- Sections ---------- */
+  section { margin-bottom: 3.2rem; }
+  h2 {
+    font-family: "Abril Fatface", Georgia, serif;
+    font-weight: 400; font-size: 1.55rem; color: var(--bordeaux);
+    text-align: center; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .h2-filet {
+    display: flex; align-items: center; justify-content: center; gap: 0.7rem;
+    margin: 0.6rem auto 0.5rem;
+  }
+  .h2-filet::before, .h2-filet::after { content: ""; width: 44px; height: 2px; background: var(--moutarde); border-radius: 2px; }
+  .h2-filet .point { width: 8px; height: 8px; border-radius: 50%; background: var(--bordeaux); }
+  .section-note {
+    text-align: center; font-size: 0.9rem; font-style: italic;
+    color: var(--gris); margin-bottom: 1.8rem;
+  }
+
+  .ardoise {
+    background: #fff;
+    border: 2px solid var(--brun);
+    border-radius: 8px;
+    box-shadow: 6px 6px 0 var(--moutarde);
+    padding: 1.2rem 1.8rem;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .ardoise:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--moutarde); }
+  .ligne-prix {
+    display: flex; align-items: baseline; gap: 0.7rem;
+    padding: 0.85rem 0; flex-wrap: wrap;
+    border-bottom: 1px dashed var(--ligne);
+  }
+  .ligne-prix:last-child { border-bottom: none; }
+  .ligne-prix .nom { font-weight: 600; font-size: 1.04rem; }
+  .ligne-prix .detail { color: var(--gris); font-size: 0.86rem; font-style: italic; }
+  .ligne-prix .points { flex: 1; border-bottom: 2px dotted #cbb894; transform: translateY(-4px); min-width: 2rem; }
+  .ligne-prix .prix {
+    font-family: "Abril Fatface", Georgia, serif;
+    font-size: 1.25rem; color: var(--bordeaux); white-space: nowrap;
+  }
+  .ligne-prix .tag {
+    font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600;
+    color: #fff; background: var(--bordeaux);
+    padding: 0.2rem 0.6rem; border-radius: 4px; white-space: nowrap;
+  }
+  .allergenes { flex-basis: 100%; font-size: 0.74rem; color: var(--gris); margin-top: 0.2rem; }
+  .allergene {
+    display: inline-block; border: 1.5px solid var(--ligne); border-radius: 999px;
+    padding: 0.1rem 0.6rem; margin: 0.18rem 0.15rem 0 0;
+    font-size: 0.68rem; font-weight: 400; color: var(--gris); background: var(--creme);
+  }
+  .legende-allergenes {
+    text-align: center; font-size: 0.76rem; font-style: italic;
+    color: var(--gris); margin-top: 1.1rem;
+  }
+
+  /* ---------- Photos d'illustration ---------- */
+  .photos { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .photo-fig { margin: 0; }
+  .photo-fig img {
+    width: 100%; display: block; aspect-ratio: 3 / 2; object-fit: cover;
+    border: 2px solid var(--brun); border-radius: 8px;
+    box-shadow: 5px 5px 0 var(--moutarde);
+  }
+  .photo-fig figcaption {
+    margin-top: 0.65rem; text-align: center;
+    font-size: 0.78rem; font-style: italic; color: var(--gris);
+  }
+  .note-photos {
+    text-align: center; font-size: 0.74rem; color: #b0a48e;
+    margin-top: 1.1rem; letter-spacing: 0.03em;
+  }
+
+  .note-carte {
+    text-align: center; font-size: 0.92rem; font-style: italic; color: var(--gris);
+    max-width: 34rem; margin: 0 auto;
+  }
+  .note-carte::before {
+    content: ""; display: block; width: 56px; height: 3px; border-radius: 2px;
+    background: var(--moutarde); margin: 0 auto 1.4rem;
+  }
+
+  /* ---------- Infos pratiques ---------- */
+  .infos {
+    margin-top: 3.2rem;
+    background:
+      radial-gradient(ellipse at 50% -30%, rgba(217,164,65,0.22) 0%, transparent 60%),
+      linear-gradient(165deg, var(--vinyle) 0%, var(--vinyle-fonce) 100%);
+    color: var(--creme);
+    border-radius: 10px;
+    padding: 2.4rem 2rem;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem;
+    box-shadow: 0 20px 45px rgba(46,33,24,0.3);
+    border-top: 5px solid var(--moutarde);
+  }
+  .infos .info { text-align: center; }
+  .infos .info-titre {
+    font-size: 0.64rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--moutarde-clair); margin-bottom: 0.6rem; font-weight: 600;
+  }
+  .infos .info-texte { font-size: 0.92rem; line-height: 1.7; color: #ece0ca; }
+  .infos .info-texte em { color: #c4b49a; }
+
+  .mention-reconstitution {
+    max-width: 780px; margin: 0 auto; padding: 0 1.5rem 2.2rem;
+    text-align: center; font-size: 0.74rem; color: #b0a48e; letter-spacing: 0.04em;
+  }
+
+  /* ---------- Footer CTA ---------- */
+  .cta {
+    background:
+      radial-gradient(ellipse at 50% -20%, rgba(217,164,65,0.2) 0%, transparent 60%),
+      linear-gradient(180deg, var(--vinyle) 0%, var(--vinyle-fonce) 100%);
+    color: var(--creme);
+    text-align: center; padding: 3.6rem 1.5rem 3.2rem;
+    border-top: 6px solid var(--moutarde);
+  }
+  .cta .sur-cta { font-size: 0.66rem; letter-spacing: 0.34em; text-transform: uppercase; color: var(--moutarde-clair); margin-bottom: 1rem; font-weight: 600; }
+  .cta h3 {
+    font-family: "Abril Fatface", Georgia, serif; font-weight: 400;
+    font-size: clamp(1.5rem, 4vw, 1.9rem); margin-bottom: 0.9rem;
+  }
+  .cta .offre { font-size: 1rem; margin-bottom: 0.4rem; color: #ddcfb6; }
+  .cta .offre strong { color: #fff; }
+  .cta .prix-cta {
+    font-family: "Abril Fatface", Georgia, serif;
+    font-size: 2.6rem; color: var(--moutarde);
+    margin: 1rem 0 1.7rem; line-height: 1;
+  }
+  .cta .prix-cta small { display: block; font-family: "Jost", sans-serif; font-size: 0.72rem; letter-spacing: 0.26em; text-transform: uppercase; color: #c4b49a; margin-top: 0.5rem; font-weight: 400; }
+  .cta .contact { font-size: 0.92rem; line-height: 2; color: #c4b49a; }
+  .cta .contact a { color: #fff; text-decoration: none; border-bottom: 1px solid var(--moutarde); transition: color 0.2s; }
+  .cta .contact a:hover { color: var(--moutarde-clair); }
+  .cta .contact .nom { font-size: 1.02rem; color: #fff; letter-spacing: 0.1em; font-weight: 600; }
+
+  @media (max-width: 600px) {
+    .infos { grid-template-columns: 1fr; gap: 1.3rem; padding: 2rem 1.4rem; }
+    .hero { padding: 2.4rem 1.3rem 2.3rem; box-shadow: 5px 5px 0 var(--moutarde); }
+    .ardoise { padding: 0.8rem 1.2rem; box-shadow: 4px 4px 0 var(--moutarde); }
+    .photos { grid-template-columns: 1fr; }
+    .photo-fig img { box-shadow: 4px 4px 0 var(--moutarde); }
+    .ligne-prix .detail { display: block; width: 100%; }
+  }
+</style>
+<link rel="stylesheet" href="../../assets/demo-interactions.css">
+<link rel="stylesheet" href="../../assets/google-reviews.css">
+<script src="../../assets/visit-config.js"></script>
+</head>
+<body>
+<style>
+* { letter-spacing: 0 !important; }
+body { background: #fafafa; color: #203e35; }
+:root { --brun: #203e35; --bordeaux: #24634e; --bordeaux-fonce: #194936; --moutarde: #ca8d3c; --creme: #fafafa; --ligne: #d3ded8; --gris: #586960; }
+.hero { border: 0; border-radius: 0; padding: 0 0 1.5rem; background: none; box-shadow: none; margin: 2rem auto; }
+.hero img { display: block; width: 100%; aspect-ratio: 16/9; object-fit: cover; margin-bottom: 1.4rem; }
+h1.titre { font-size: 3rem; }
+.ardoise, .ardoise:hover { border: 0; border-radius: 0; box-shadow: none; transform: none; padding: 0; }
+.ligne-prix { align-items: center; position: relative; }
+.verrou { background: #203e35; }
+.verrou-carte button, .bandeau-demo, .cta { background: #203e35; }
+.verrou-carte p { color: #42564b; }
+.cta { padding: 2rem 1.5rem; }
+.notice { color: #586960; font-size: .88rem; margin: 1rem 0; }
+a { color: #24634e; }
+@media(max-width:600px) { h1.titre { font-size: 2.4rem; } .verrou-carte { padding: 2rem 1.2rem; } }
+</style>
+<div class="verrou" id="verrou">
+  <div class="verrou-carte">
+    <p class="sur">Démo privée</p>
+    <h1>Chez Teta</h1>
+    <p>Une proposition de menu digital pour votre établissement à Vigneux-de-Bretagne.</p>
+    <form id="form-verrou">
+      <input type="text" id="code" autocomplete="off" placeholder="CODE D'ACCÈS" aria-label="Code d'accès" required>
+      <button type="submit">Déverrouiller la démo</button>
+    </form>
+    <p class="verrou-erreur" id="erreur" role="status"></p>
+  </div>
+</div>
+<main class="contenu" id="contenu">
+<div class="bandeau-demo">Proposition privée pour Chez Teta · Non contractuelle</div>
+<div class="carte">
+  <header class="hero">
+    <img src="https://www.chezteta.fr/wp-content/uploads/2019/08/Chez-TETA_Nantes-traiteur-libanais_plats_mosaique.jpg" alt="Assortiment de spécialités libanaises publié par Chez Teta">
+    <p class="sur-titre">Vigneux-de-Bretagne · Traiteur libanais</p>
+    <h1 class="titre" tabindex="-1">Chez Teta</h1>
+    <p class="sous-titre">Mezzés, déjeuner et réceptions</p>
+  </header>
+  <section aria-labelledby="menu-title">
+    <h2 id="menu-title">Les spécialités</h2>
+    <p class="section-note">Une sélection issue de votre site</p>
+    <div class="ardoise">
+<div class="ligne-prix"><span class="nom">Sambousik</span><span class="detail">Bouchées au bœuf</span><p class="allergenes">Allergènes non confirmés. Demandez la liste validée à Chez Teta avant de commander.</p></div>
+<div class="ligne-prix"><span class="nom">Rakakat</span><span class="detail">Bouchées au fromage et aux herbes</span><p class="allergenes">Allergènes non confirmés. Demandez la liste validée à Chez Teta avant de commander.</p></div>
+<div class="ligne-prix"><span class="nom">Taouk</span><span class="detail">Poulet mariné</span><p class="allergenes">Allergènes non confirmés. Demandez la liste validée à Chez Teta avant de commander.</p></div>
+<div class="ligne-prix"><span class="nom">Kefta</span><span class="detail">Bœuf aux herbes</span><p class="allergenes">Allergènes non confirmés. Demandez la liste validée à Chez Teta avant de commander.</p></div>
+<div class="ligne-prix"><span class="nom">Fatouche</span><span class="detail">Salade libanaise</span><p class="allergenes">Allergènes non confirmés. Demandez la liste validée à Chez Teta avant de commander.</p></div>
+<div class="ligne-prix"><span class="nom">Baklava</span><span class="detail">Pâtisserie aux fruits à coque</span><p class="allergenes">Allergènes non confirmés. Demandez la liste validée à Chez Teta avant de commander.</p></div>
+    </div>
+    <p class="notice">Sélection présentée à titre d'aperçu : carte actuelle, disponibilités, prix et allergènes à valider avec Matthieu. Aucune information allergène n'est déduite des photos.</p>
+  </section>
+  <section>
+    <h2>Vos formules</h2>
+    <div class="ardoise">
+      <div class="ligne-prix"><span class="nom">Box déjeuner</span><span class="detail">Entrée, plat, dessert et boisson</span></div>
+      <div class="ligne-prix"><span class="nom">Réception et événement</span><span class="detail">Composition sur demande</span></div>
+    </div>
+    <p class="notice">Tarifs à confirmer avec Chez Teta.</p>
+  </section>
+  <section>
+    <h2>En images</h2>
+    <figure class="photo-fig">
+      <img src="https://www.chezteta.fr/wp-content/uploads/2019/10/Chez-TETA_Nantes-traiteur-libanais_SANDWICH-TAOUK-1024x1024.jpg" alt="Taouk photographié et publié par Chez Teta" loading="lazy">
+      <figcaption>Photo publiée par Chez Teta, sans retouche ni génération IA.</figcaption>
+    </figure>
+    <p class="notice">Plats et photographies : <a href="https://www.chezteta.fr/" target="_blank" rel="noopener noreferrer">site officiel de Chez Teta</a>. Utilisation dans cet aperçu privé, à valider avant diffusion publique.</p>
+  </section>
+  <section>
+    <h2>Avis clients</h2>
+    <p class="notice">Les cinq avis Google les plus récents restent à vérifier avant intégration. Aucun avis d'un autre établissement n'est affiché dans cette démo.</p>
+  </section>
+</div>
+<footer class="cta">
+  <h3>Échangeons sur votre carte</h3>
+  <p class="contact"><span class="nom">Mathurin ACHE ARNAUD</span><br>
+  <a href="mailto:mathurin.ache@maaihub.com?subject=Menu%20digital%20Chez%20Teta">mathurin.ache@maaihub.com</a><br>
+  <a href="tel:+33683959720">06 83 95 97 20</a></p>
+</footer>
+</main>
+<script>
+(function () {
+  "use strict";
+  var ACCESS_CODE = "MENU10092605";
+  var PAGE_SLUG = "menus/chez-teta";
+  document.getElementById("form-verrou").addEventListener("submit", function (event) {
+    event.preventDefault();
+    var value = document.getElementById("code").value.toUpperCase().replace(/\s+/g, "");
+    if (value !== ACCESS_CODE) {
+      document.getElementById("erreur").textContent = "Code incorrect. Vérifiez le code communiqué.";
+      return;
+    }
+    document.getElementById("erreur").textContent = "";
+    document.getElementById("verrou").hidden = true;
+    document.getElementById("verrou").style.display = "none";
+    document.getElementById("contenu").classList.add("visible");
+    document.body.style.overflow = "";
+    document.querySelector("h1.titre").focus();
+    var endpoint = window.DEMO_VISITS_ENDPOINT || "";
+    if (endpoint) fetch(endpoint + "/track?slug=" + encodeURIComponent(PAGE_SLUG), {mode:"cors"}).catch(function () {});
+  });
+  document.body.style.overflow = "hidden";
+})();
+window.MENU_VISUALS = [
+  {match:"Taouk",src:"https://www.chezteta.fr/wp-content/uploads/2019/10/Chez-TETA_Nantes-traiteur-libanais_SANDWICH-TAOUK-1024x1024.jpg",alt:"Taouk publié par Chez Teta",caption:"Photo originale publiée sur le site de Chez Teta."}
+];
+</script>
+<script src="../../assets/demo-interactions.js"></script>
+</body>
+</html>
